@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastPay — Intelligent Checkout for Fast Casual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Lato:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  FASTPAY SITE CONFIG — EDIT THESE VALUES FREELY
+//  No coding knowledge needed. Save the file and refresh your browser.
+// ═══════════════════════════════════════════════════════════════════
+const CONFIG = {
+  COMPANY_NAME:        "FastPay",
+  TAGLINE:             "Intelligent Checkout for Fast Casual",
+  CONTACT_RESTAURANT:  "nebesayas14@gmail.com",
+  CONTACT_INVESTOR:    "nebesayas14@gmail.com",
+  DASHBOARD_PASSWORD:  "fastpay2026",
+  SITE_PASSWORD:       "fastpay2026",
+  SITE_LOCK_TITLE:     "FastPay Private Access",
+  SITE_LOCK_SUBTITLE:  "Enter the access password to view the FastPay restaurant, investor, and client portal pages.",
+
+  CLIENT_PORTAL_NAV:       "Client Login",
+  CLIENT_PORTAL_LABEL:     "Client Portal",
+  CLIENT_PORTAL_TITLE:     "FastPay Client Login",
+  CLIENT_PORTAL_SUBTITLE:  "Access your FastPay data, deployment records, pilot notes, account follow-ups, and exports.",
+  CLIENT_PORTAL_APP_LABEL: "Client Data Portal",
+  CLIENT_PORTAL_APP_TITLE: "FastPay Client Portal",
+  CLIENT_PORTAL_APP_SUB:   "Account data, deployment records, sales pipeline notes, pilot tasks, costs, and backups in one secure workspace.",
+
+  TAM:                 "$99B+",
+  CASHIER_LABOR_COST:  "$20/hr*",
+  FAST_CASUAL_UNITS:   "44,000+",
+  FAST_CASUAL_SOURCE:  "Technomic Top 500 Chain Restaurant Report, 2025",
+
+  DETECTION_ACCURACY:        "99%",
+  DETECTION_ACCURACY_LABEL:  "Expected Detection Accuracy",
+  PILOT_LOCATIONS:           "1 pilot location and growing",
+  BOWLS_PROCESSED:           "1,400+",
+  CHECKOUT_TIME:             "8 seconds",
+
+  CASHIER_LABOR_DISPLAY:     "Zero",
+  HARDWARE_PAYBACK:          "Less than a week",
+
+  MONTHLY_PER_LOCATION: "$299",
+  HARDWARE_COST:        "$399",
+  GROSS_MARGIN:         "TBD",
+  ARR_TARGET_12MO:      "TBD",
+  ARR_TARGET_24MO:      "$6M",
+
+  ROI_BOWLS_DEFAULT:    250,
+  ROI_BOWLS_MIN:        50,
+  ROI_BOWLS_MAX:        800,
+  ROI_WAGE_DEFAULT:     20,
+  ROI_WAGE_MIN:         12,
+  ROI_WAGE_MAX:         35,
+  ROI_CASHIERS_DEFAULT: 1,
+  ROI_CASHIERS_MIN:     1,
+  ROI_CASHIERS_MAX:     4,
+  OPERATING_HOURS_DAY:  8,
+  OPERATING_DAYS_MONTH: 26,
+
+  RAISE_AMOUNT:         "$500K",
+  RAISE_TYPE:           "Pre-Seed",
+  VALUATION_CAP:        "$4M",
+  INSTRUMENT:           "SAFE Note",
+  CLOSING_DATE:         "Q3 2026",
+
+  USE_ENGINEERING:      "45%",
+  USE_PILOTS:           "30%",
+  USE_SALES:            "15%",
+  USE_OPERATIONS:       "10%",
+
+  MILESTONE_1: { quarter: "Q3 2026", title: "Pilot Expansion",         desc: "Deploy to 3 restaurants with different menu items" },
+  MILESTONE_2: { quarter: "Q4 2026", title: "Platform Hardening",      desc: "99.9% uptime SLA, multi-location dashboard, operator portal" },
+  MILESTONE_3: { quarter: "Q1 2027", title: "Seed Round",              desc: "$2.5M raise to accelerate enterprise sales" },
+  MILESTONE_4: { quarter: "Q2 2027", title: "Enterprise Contracts",    desc: "Signed agreements with 2+ regional chain operators" },
+  MILESTONE_5: { quarter: "Q4 2027", title: "100 Location Milestone",  desc: "$600K ARR, profitability at location level" },
+  MILESTONE_6: { quarter: "2028",    title: "National Scale",          desc: "500+ locations, Series A, international expansion" },
+
+  ASSUMPTIONS: [
+    "$20/hr cashier labor assumption is based on New York City wage context and is used for directional ROI only.",
+    "44,000+ fast casual units excludes QSRs; source: Technomic Top 500 Chain Restaurant Report, 2025.",
+    "$99B+ TAM is a directional market-sizing placeholder and should be updated as diligence materials are refined.",
+    "99% expected detection accuracy is a target assumption, not a completed multi-location audited result.",
+    "Hardware payback depends on location volume, staffing model, wage rate, and operating hours."
+  ],
+
+  TEAM: [
+    { name: "Founder", title: "CEO & Co-Founder", bio: "Add your bio here." }
+  ],
+  ADVISORS: []
+};
+</script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --espresso:#2C1A0E; --espresso-mid:#4A2E1A; --terracotta:#C4622D; --terracotta-lt:#EEDDD4;
+  --linen:#FAF7F2; --cream:#F2EDE4; --sage:#5C6E58; --sage-lt:#E4EBE3;
+  --warm-black:#1A1209; --warm-gray:#7A6E65; --warm-border:#E0D8CE; --white:#FDFAF6;
+  --font-display:'DM Serif Display', Georgia, serif; --font-body:'Lato','Helvetica Neue',sans-serif; --font-editorial:'Cormorant Garamond', Georgia, serif;
+  --max-w:1120px; --radius:4px; --radius-lg:12px; --transition:0.28s cubic-bezier(0.4,0,0.2,1);
+}
+html { scroll-behavior:smooth; }
+body { font-family:var(--font-body); background:var(--linen); color:var(--warm-black); font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased; }
+button, input, select, textarea { font: inherit; }
+a { color: inherit; }
+nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(250,247,242,.94); backdrop-filter:blur(12px); border-bottom:1px solid var(--warm-border); min-height:64px; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:0 40px; }
+.nav-logo { font-family:var(--font-display); font-size:1.5rem; color:var(--espresso); letter-spacing:-.02em; white-space:nowrap; }
+.nav-logo span { color:var(--terracotta); }
+.nav-tabs { display:flex; gap:4px; background:var(--cream); border:1px solid var(--warm-border); border-radius:6px; padding:4px; }
+.nav-link { padding:7px 20px; border:none; background:none; font-size:.85rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--warm-gray); cursor:pointer; border-radius:4px; transition:var(--transition); white-space:nowrap; }
+.nav-link.active { background:var(--espresso); color:var(--white); }
+.nav-cta { padding:9px 22px; background:var(--terracotta); color:var(--white); border:none; border-radius:4px; font-weight:700; font-size:.85rem; letter-spacing:.05em; text-transform:uppercase; cursor:pointer; transition:var(--transition); white-space:nowrap; }
+.nav-cta:hover { background:var(--espresso); }
+.page { display:none; padding-top:64px; } .page.active { display:block; }
+.container { max-width:var(--max-w); margin:0 auto; padding:0 40px; }
+.section { padding:96px 0; } .section-alt { background:var(--cream); } .section-dark { background:var(--espresso); color:var(--white); }
+.label { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--terracotta); margin-bottom:16px; display:block; } .label-light { color:var(--terracotta-lt); }
+h1,h2,h3 { font-family:var(--font-display); line-height:1.15; }
+.section-title { font-size:clamp(2rem,4vw,3rem); color:var(--espresso); margin-bottom:20px; letter-spacing:-.02em; } .section-title-light { color:var(--white); }
+.section-sub { font-size:1.1rem; color:var(--warm-gray); max-width:620px; line-height:1.7; margin-bottom:56px; } .section-sub-light { color:rgba(253,250,246,.7); }
+.divider { width:48px; height:2px; background:var(--terracotta); margin:24px 0 48px; }
+.hero { min-height:92vh; display:flex; align-items:center; background:var(--espresso); position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 80% 50%, rgba(196,98,45,.18) 0%, transparent 70%), radial-gradient(ellipse 40% 60% at 20% 80%, rgba(92,110,88,.15) 0%, transparent 60%); }
+.hero-inner { position:relative; z-index:1; max-width:var(--max-w); margin:0 auto; padding:80px 40px; width:100%; }
+.hero-eyebrow { font-size:.75rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--terracotta-lt); margin-bottom:28px; opacity:0; animation:fadeUp .8s ease .1s forwards; }
+.hero-title { font-size:clamp(3rem,7vw,5.5rem); line-height:1.05; color:var(--white); letter-spacing:-.03em; max-width:820px; margin-bottom:32px; opacity:0; animation:fadeUp .8s ease .25s forwards; } .hero-title em { font-style:italic; color:var(--terracotta-lt); }
+.hero-sub { font-size:1.15rem; color:rgba(253,250,246,.72); max-width:560px; line-height:1.75; margin-bottom:48px; font-weight:300; opacity:0; animation:fadeUp .8s ease .4s forwards; }
+.hero-actions { display:flex; gap:16px; flex-wrap:wrap; opacity:0; animation:fadeUp .8s ease .55s forwards; }
+.btn-primary,.btn-outline { padding:14px 32px; border-radius:var(--radius); font-weight:700; font-size:.9rem; letter-spacing:.06em; text-transform:uppercase; cursor:pointer; transition:var(--transition); }
+.btn-primary { background:var(--terracotta); color:var(--white); border:none; text-decoration:none; display:inline-block; } .btn-primary:hover { background:#A84E22; transform:translateY(-1px); }
+.btn-outline { background:transparent; color:rgba(253,250,246,.85); border:1px solid rgba(253,250,246,.3); } .btn-outline:hover { border-color:var(--white); color:var(--white); }
+.hero-stats { display:flex; gap:48px; flex-wrap:wrap; margin-top:80px; padding-top:48px; border-top:1px solid rgba(253,250,246,.12); opacity:0; animation:fadeUp .8s ease .7s forwards; }
+.hero-stat-value { font-family:var(--font-display); font-size:2.4rem; color:var(--white); line-height:1; margin-bottom:6px; } .hero-stat-label { font-size:.78rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(253,250,246,.52); }
+.steps-grid,.features-grid,.opp-grid,.model-grid,.team-grid,.install-grid,.changes-grid { display:grid; gap:32px; margin-top:56px; }
+.steps-grid { grid-template-columns:repeat(3,1fr); gap:2px; background:var(--warm-border); border:1px solid var(--warm-border); border-radius:var(--radius-lg); overflow:hidden; }
+.features-grid,.opp-grid,.model-grid,.changes-grid { grid-template-columns:repeat(2,1fr); } .install-grid { grid-template-columns:repeat(3,1fr); } .team-grid { grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); }
+.step,.feature-card,.opp-card,.model-card,.team-card,.install-card,.change-card { background:var(--white); border:1px solid var(--warm-border); border-radius:var(--radius-lg); padding:40px; transition:var(--transition); } .step { border:none; border-radius:0; padding:48px 40px; }
+.feature-card:hover,.opp-card:hover,.install-card:hover { border-color:var(--terracotta); box-shadow:0 12px 40px rgba(44,26,14,.08); transform:translateY(-2px); }
+.step-num { font-family:var(--font-editorial); font-size:4rem; color:var(--terracotta-lt); line-height:1; margin-bottom:24px; font-weight:400; }
+.step-title,.feature-title,.model-title,.roadmap-title,.team-name,.install-title,.change-title { font-family:var(--font-display); color:var(--espresso); }
+.step-title { font-size:1.4rem; margin-bottom:14px; } .feature-title,.install-title,.change-title { font-size:1.25rem; margin-bottom:12px; }
+.step-desc,.feature-desc,.opp-desc,.model-desc,.roadmap-desc,.team-bio,.install-desc,.change-list { font-size:.95rem; color:var(--warm-gray); line-height:1.7; }
+.install-kicker { display:inline-block; padding:4px 11px; border-radius:20px; background:var(--sage-lt); color:var(--sage); font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:18px; }
+.change-list { padding-left:18px; }
+.roi-wrap { display:grid; grid-template-columns:1fr 1fr; background:var(--white); border:1px solid var(--warm-border); border-radius:var(--radius-lg); overflow:hidden; margin-top:56px; }
+.roi-left { padding:56px 48px; border-right:1px solid var(--warm-border); } .roi-right { padding:56px 48px; background:var(--espresso); }
+.roi-label { font-size:.75rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--warm-gray); margin-bottom:10px; display:block; } .roi-slider-wrap { margin-bottom:36px; }
+.roi-slider { width:100%; height:3px; -webkit-appearance:none; background:var(--warm-border); border-radius:2px; outline:none; margin-top:12px; }
+.roi-slider::-webkit-slider-thumb { -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--terracotta); cursor:pointer; } .roi-val { font-family:var(--font-display); font-size:1.3rem; color:var(--espresso); }
+.roi-result-label { font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:rgba(253,250,246,.5); margin-bottom:10px; display:block; } .roi-result-value { font-family:var(--font-display); font-size:2.7rem; color:var(--white); line-height:1.1; margin-bottom:32px; } .roi-result-value.accent { color:var(--terracotta-lt); } .roi-divider { height:1px; background:rgba(253,250,246,.1); margin:32px 0; }
+.assumption-note { margin-top:24px; color:var(--warm-gray); font-size:.9rem; line-height:1.7; }
+.table-wrap { overflow-x:auto; border-radius:var(--radius-lg); margin-top:56px; }
+.comparison-table { width:100%; min-width:760px; border-collapse:separate; border-spacing:0; background:var(--white); border:1px solid var(--warm-border); border-radius:var(--radius-lg); overflow:hidden; font-size:.9rem; }
+.comparison-table th { padding:20px 28px; text-align:left; font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; background:var(--cream); color:var(--warm-gray); border-bottom:1px solid var(--warm-border); } .comparison-table th.highlight { background:var(--espresso); color:var(--terracotta-lt); }
+.comparison-table td { padding:18px 28px; border-bottom:1px solid var(--warm-border); color:var(--warm-black); } .comparison-table td.highlight { background:rgba(44,26,14,.03); font-weight:700; color:var(--espresso); } .comparison-table tr:last-child td { border-bottom:none; } .check { color:var(--sage); font-weight:700; } .cross { color:#C0392B; } .partial { color:var(--terracotta); }
+.cta-inner { text-align:center; max-width:680px; margin:0 auto; padding:96px 0; } .cta-title { font-size:clamp(2rem,4vw,3.2rem); color:var(--white); margin-bottom:20px; letter-spacing:-.02em; } .cta-sub { font-size:1.05rem; color:rgba(253,250,246,.65); margin-bottom:40px; line-height:1.7; }
+.cta-form { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; } .cta-input { padding:13px 20px; background:rgba(253,250,246,.1); border:1px solid rgba(253,250,246,.25); border-radius:var(--radius); color:var(--white); font-size:.95rem; width:280px; outline:none; } .inline-email-link { color:inherit; text-decoration:underline; text-underline-offset:3px; }
+.inv-hero { background:var(--espresso); padding:120px 0 80px; position:relative; overflow:hidden; } .inv-hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 50% 70% at 75% 50%, rgba(196,98,45,.15) 0%, transparent 65%); } .inv-hero-inner { position:relative; z-index:1; max-width:var(--max-w); margin:0 auto; padding:0 40px; } .inv-hero-title { font-size:clamp(2.5rem,5vw,4.2rem); color:var(--white); letter-spacing:-.03em; max-width:720px; margin-bottom:24px; line-height:1.1; } .inv-hero-sub { font-size:1.1rem; color:rgba(253,250,246,.65); max-width:580px; line-height:1.75; font-weight:300; }
+.metrics-bar { display:flex; background:var(--white); border:1px solid var(--warm-border); border-radius:var(--radius-lg); overflow:hidden; margin-top:64px; } .metric-item { flex:1; padding:36px 32px; border-right:1px solid var(--warm-border); } .metric-item:last-child { border-right:none; } .metric-value,.opp-num,.model-amount { font-family:var(--font-display); color:var(--terracotta); line-height:1; } .metric-value { font-size:2.2rem; color:var(--espresso); margin-bottom:8px; } .opp-num { font-size:3rem; margin-bottom:12px; } .model-amount { font-size:2rem; margin-bottom:12px; } .metric-label { font-size:.75rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--warm-gray); }
+.model-grid { gap:2px; background:var(--warm-border); border:1px solid var(--warm-border); border-radius:var(--radius-lg); overflow:hidden; } .model-card { border:none; border-radius:0; } .model-tag { display:inline-block; padding:4px 12px; background:var(--sage-lt); color:var(--sage); font-size:.7rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; border-radius:20px; margin-bottom:20px; }
+.roadmap { position:relative; margin-top:56px; padding-left:32px; } .roadmap::before { content:''; position:absolute; left:7px; top:8px; bottom:8px; width:2px; background:var(--warm-border); } .roadmap-item { position:relative; padding:0 0 44px 40px; } .roadmap-item::before { content:''; position:absolute; left:-1px; top:8px; width:16px; height:16px; border-radius:50%; background:var(--terracotta-lt); border:3px solid var(--terracotta); } .roadmap-quarter { font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--terracotta); margin-bottom:6px; }
+.raise-card { background:var(--espresso); border-radius:var(--radius-lg); padding:64px; margin-top:56px; display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start; } .raise-terms { display:grid; grid-template-columns:1fr 1fr; gap:32px; } .raise-term-label { font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(253,250,246,.45); margin-bottom:8px; } .raise-term-value { font-family:var(--font-display); font-size:1.5rem; color:var(--white); } .fund-bar-wrap { margin-bottom:20px; } .fund-bar-label { display:flex; justify-content:space-between; font-size:.82rem; margin-bottom:8px; color:rgba(253,250,246,.7); } .fund-bar-track { height:6px; background:rgba(253,250,246,.12); border-radius:3px; overflow:hidden; } .fund-bar-fill { height:100%; background:var(--terracotta); border-radius:3px; }
+.assumptions-list { display:grid; gap:12px; } .assumption-item { background:var(--white); border:1px solid var(--warm-border); border-radius:var(--radius-lg); padding:18px 20px; color:var(--warm-gray); font-size:.94rem; } .assumption-item strong { color:var(--espresso); }
+footer { background:var(--warm-black); padding:48px 0; text-align:center; } .footer-logo { font-family:var(--font-display); font-size:1.6rem; color:var(--white); margin-bottom:12px; } .footer-logo span { color:var(--terracotta); } .footer-sub { font-size:.85rem; color:rgba(253,250,246,.45); }
+@keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } } .fade-in { opacity:0; transform:translateY(20px); transition:opacity .6s ease, transform .6s ease; } .fade-in.visible { opacity:1; transform:translateY(0); }
+
+/* Full-site password gate */
+#site-content { display:none; }
+body.site-unlocked #site-content { display:block; }
+body.site-unlocked #site-lock { display:none; }
+.site-lock {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  background:
+    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(196,98,45,0.16) 0%, transparent 62%),
+    radial-gradient(ellipse 45% 60% at 15% 85%, rgba(92,110,88,0.14) 0%, transparent 58%),
+    var(--espresso);
+  color:var(--white);
+}
+.site-lock-card {
+  width:100%;
+  max-width:520px;
+  background:rgba(253,250,246,0.06);
+  border:1px solid rgba(253,250,246,0.16);
+  border-radius:var(--radius-lg);
+  padding:44px;
+  box-shadow:0 28px 90px rgba(0,0,0,0.28);
+  backdrop-filter:blur(12px);
+}
+.site-lock-logo {
+  font-family:var(--font-display);
+  font-size:1.7rem;
+  margin-bottom:28px;
+  color:var(--white);
+}
+.site-lock-logo span { color:var(--terracotta-lt); }
+.site-lock-title {
+  font-family:var(--font-display);
+  font-size:clamp(2rem,5vw,3rem);
+  line-height:1.1;
+  letter-spacing:-0.02em;
+  margin-bottom:14px;
+}
+.site-lock-subtitle {
+  color:rgba(253,250,246,0.68);
+  font-size:1rem;
+  line-height:1.7;
+  margin-bottom:28px;
+}
+.site-lock-form { display:flex; gap:10px; }
+.site-lock-input {
+  flex:1;
+  min-width:0;
+  padding:13px 14px;
+  border-radius:var(--radius);
+  border:1px solid rgba(253,250,246,0.24);
+  background:rgba(253,250,246,0.1);
+  color:var(--white);
+  outline:none;
+}
+.site-lock-input::placeholder { color:rgba(253,250,246,0.4); }
+.site-lock-input:focus { border-color:var(--terracotta-lt); background:rgba(253,250,246,0.14); }
+.site-lock-error {
+  min-height:1.25em;
+  color:#FCA5A5;
+  font-size:.9rem;
+  margin-top:12px;
+}
+.site-lock-note {
+  color:rgba(253,250,246,0.42);
+  font-size:.78rem;
+  line-height:1.55;
+  margin-top:22px;
+}
+@media (max-width:520px) {
+  .site-lock-card { padding:32px 24px; }
+  .site-lock-form { flex-direction:column; }
+  .site-lock-form .btn-primary { width:100%; }
+}
+
+/* Dashboard */
+.dashboard-page { background:#070a0e; color:#e5e7eb; min-height:100vh; } .dashboard-shell { max-width:1240px; margin:0 auto; padding:96px 24px 48px; } .dashboard-login { min-height:70vh; display:flex; align-items:center; justify-content:center; } .dashboard-login-card,.dash-panel,.dash-card { background:#0c0e17; border:1px solid #252836; border-radius:18px; padding:28px; } .dashboard-login-card { width:100%; max-width:560px; } .dashboard-title { color:#fff; font-size:2.6rem; margin-bottom:16px; } .dashboard-muted { color:#9ca3af; margin-bottom:20px; } .dashboard-password-row { display:flex; gap:10px; } .dashboard-input,.dashboard-select,.dashboard-textarea { width:100%; background:#161824; border:1px solid #252836; border-radius:8px; padding:10px 13px; color:#e5e7eb; outline:none; } .dashboard-textarea { min-height:90px; resize:vertical; } .dashboard-error { color:#ef4444; margin-top:10px; font-size:.9rem; min-height:1.2em; } .dashboard-warning { margin-top:18px; color:#6b7280; font-size:.82rem; line-height:1.6; } .dashboard-topbar { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:22px; } .dash-title { color:#fff; font-size:2.3rem; margin-bottom:8px; } .dash-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; } .dash-tab { border:1px solid #252836; background:#0c0e17; color:#9ca3af; border-radius:9px; padding:8px 13px; cursor:pointer; font-size:.85rem; } .dash-tab.active { background:#f97316; border-color:#f97316; color:#fff; } .dash-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:18px; } .dash-card-label { color:#6b7280; font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:6px; } .dash-card-value { font-family:var(--font-display); font-size:2rem; color:#fff; } .dash-list { display:grid; gap:8px; } .dash-row { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; background:#11131d; border:1px solid #202333; border-radius:12px; padding:14px 16px; } .dash-row-title { color:#f9fafb; font-weight:700; font-size:.95rem; } .dash-row-sub { color:#9ca3af; font-size:.82rem; margin-top:4px; line-height:1.55; } .dash-meta { color:#6b7280; font-size:.74rem; } .dash-pill { display:inline-block; padding:2px 8px; border-radius:99px; background:#f9731622; color:#f97316; border:1px solid #f9731644; font-size:.68rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; margin-left:4px; } .dash-btn,.dash-link-btn { border:none; border-radius:8px; cursor:pointer; font-weight:700; } .dash-btn { background:#f97316; color:#fff; padding:9px 15px; } .dash-btn.ghost { background:transparent; color:#9ca3af; border:1px solid #252836; } .dash-link-btn { background:transparent; color:#9ca3af; padding:4px 8px; } .dash-link-btn.danger { color:#ef4444; } .dash-form { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:18px; } .dash-form label { color:#6b7280; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; } .dash-form .full { grid-column:1/-1; } .dash-form-actions { grid-column:1/-1; display:flex; justify-content:flex-end; } .dash-empty { padding:38px; text-align:center; color:#4b5563; font-size:.85rem; } .version-changes { margin-top:8px; padding-left:18px; color:#9ca3af; font-size:.78rem; } .dash-actions { display:flex; gap:8px; flex-wrap:wrap; }
+@media (max-width:768px) {
+  nav { padding:10px 16px; flex-wrap:wrap; } .nav-logo { width:100%; text-align:center; } .nav-tabs { flex:1; justify-content:center; overflow-x:auto; } .nav-link { padding:7px 12px; font-size:.72rem; } .nav-cta { display:none; } .page { padding-top:112px; }
+  .container,.hero-inner,.inv-hero-inner { padding-left:20px; padding-right:20px; } .section { padding:68px 0; } .hero { min-height:auto; } .hero-inner { padding-top:60px; padding-bottom:60px; } .hero-actions .btn-primary,.hero-actions .btn-outline { width:100%; }
+  .hero-stats { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:56px; } .steps-grid,.features-grid,.opp-grid,.model-grid,.roi-wrap,.install-grid,.changes-grid,.raise-card,.dash-form { grid-template-columns:1fr; } .roi-left { border-right:none; border-bottom:1px solid var(--warm-border); } .metrics-bar { flex-direction:column; } .metric-item { border-right:none; border-bottom:1px solid var(--warm-border); } .raise-card { gap:40px; padding:40px 24px; } .raise-terms { grid-template-columns:1fr; } .cta-form,.dashboard-password-row,.dashboard-topbar,.dash-row { flex-direction:column; } .cta-input { width:100%; } .dash-form .full { grid-column:auto; }
+}
+@media (max-width:420px) { .hero-stats { grid-template-columns:1fr; } .hero-title { font-size:2.8rem; } }
+</style>
+</head>
+<body>
+<div id="site-lock" class="site-lock">
+  <div class="site-lock-card">
+    <div class="site-lock-logo">Fast<span>Pay</span></div>
+    <span class="label label-light">Private Access</span>
+    <h1 class="site-lock-title" id="site-lock-title">FastPay Private Access</h1>
+    <p class="site-lock-subtitle" id="site-lock-subtitle">Enter the access password to view the FastPay restaurant, investor, and client portal pages.</p>
+    <form class="site-lock-form" onsubmit="unlockSite(event)">
+      <input class="site-lock-input" id="site-password" type="password" placeholder="Password" autocomplete="current-password" autofocus>
+      <button class="btn-primary" type="submit">Enter</button>
+    </form>
+    <div class="site-lock-error" id="site-lock-error"></div>
+    <p class="site-lock-note">This temporary gate is client-side and intended for pre-launch access control only. Use Cloudflare Access before storing sensitive production data.</p>
+  </div>
+</div>
+<div id="site-content">
+<nav>
+  <div class="nav-logo">Fast<span>Pay</span></div>
+  <div class="nav-tabs">
+    <button class="nav-link active" onclick="showPage('restaurant', this)">Restaurants</button>
+    <button class="nav-link" onclick="showPage('investor', this)">Investors</button>
+    <button class="nav-link" id="client-login-nav" onclick="showPage('dashboard', this)">Client Login</button>
+  </div>
+  <button class="nav-cta" onclick="scrollToContact()">Request Demo</button>
+</nav>
+
+<div class="page active" id="page-restaurant">
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Checkout, Reinvented</div>
+      <h1 class="hero-title">Your line moves.<br><em>The bill follows.</em></h1>
+      <p class="hero-sub">FastPay removes the bottleneck at the end of your assembly line — no cashier, no delay, no friction. Guests pay and go.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="scrollToContact()">Request a Demo</button>
+        <button class="btn-outline" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">See How It Works</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hero-stat-value" id="stat-accuracy">99%</div><div class="hero-stat-label" id="stat-accuracy-label">Expected Detection Accuracy</div></div>
+        <div><div class="hero-stat-value" id="stat-checkout">8 sec</div><div class="hero-stat-label">Avg. Checkout Time</div></div>
+        <div><div class="hero-stat-value" id="stat-cashier-labor">Zero</div><div class="hero-stat-label">Cashier Labor Cost</div></div>
+        <div><div class="hero-stat-value" id="stat-payback">Less than a week</div><div class="hero-stat-label">Hardware Payback Period</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how-it-works">
+    <div class="container">
+      <span class="label">The Process</span><h2 class="section-title">Three steps. Zero cashiers.</h2><div class="divider"></div>
+      <div class="steps-grid fade-in">
+        <div class="step"><div class="step-num">01</div><div class="step-title">Ingredient Detection</div><p class="step-desc">As your team builds each order, FastPay's overhead system identifies what goes into the bowl automatically, in real time, with no extra steps from staff.</p></div>
+        <div class="step"><div class="step-num">02</div><div class="step-title">Bill Built in Motion</div><p class="step-desc">Each ingredient is added to a running total as the order travels down the line. By the time the guest reaches the end, their bill is ready and waiting.</p></div>
+        <div class="step"><div class="step-num">03</div><div class="step-title">Instant Checkout</div><p class="step-desc">Guests tap to pay — card, phone, or cash — at a sleek terminal. No cashier needed. No line. No wait.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <span class="label">Installation</span><h2 class="section-title">Built to fit the line you already run.</h2><div class="divider"></div>
+      <p class="section-sub">FastPay is designed to install over your existing assembly line in a few hours, require one day of staff training, and avoid store redesigns or major operational changes.</p>
+      <div class="install-grid fade-in">
+        <div class="install-card"><span class="install-kicker">Setup</span><div class="install-title">A few hours to install</div><p class="install-desc">Hardware mounts above the line and connects to the FastPay terminal without changing your existing prep flow.</p></div>
+        <div class="install-card"><span class="install-kicker">Training</span><div class="install-title">One day of training</div><p class="install-desc">Staff learn order review, overrides, and end-of-line payment handling in a single training day.</p></div>
+        <div class="install-card"><span class="install-kicker">Workflow</span><div class="install-title">No guest behavior change</div><p class="install-desc">Guests still move down the line, receive their food, and pay at the end. The difference is that the bill is already built.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <span class="label">Operational Fit</span><h2 class="section-title">What changes. What stays the same.</h2><div class="divider"></div>
+      <div class="changes-grid fade-in">
+        <div class="change-card"><div class="change-title">What changes</div><ul class="change-list"><li>The bill is built automatically.</li><li>The cashier role is reduced or removed.</li><li>Checkout becomes faster.</li><li>Managers get better throughput data.</li></ul></div>
+        <div class="change-card"><div class="change-title">What stays the same</div><ul class="change-list"><li>Your line layout.</li><li>Your menu.</li><li>Your staff assembly process.</li><li>Your guest ordering behavior.</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <span class="label">Built for Operators</span><h2 class="section-title">Everything your line needs.<br>Nothing it doesn't.</h2><div class="divider"></div>
+      <div class="features-grid fade-in">
+        <div class="feature-card"><div class="feature-title">Live Order Tracking</div><p class="feature-desc">Every bowl is tracked from first ingredient to final payment. Your team sees the full picture on a clear, real-time dashboard.</p></div>
+        <div class="feature-card"><div class="feature-title">Integrated Payments</div><p class="feature-desc">Card, contactless, and cash — all handled at the terminal. Every transaction is logged automatically.</p></div>
+        <div class="feature-card"><div class="feature-title">Shift Analytics</div><p class="feature-desc">Review revenue, throughput, and top items by shift, day, or location. Export reports for your management team.</p></div>
+        <div class="feature-card"><div class="feature-title">Reliable by Design</div><p class="feature-desc">FastPay is designed for service conditions, with local operation and manual override paths for staff.</p></div>
+        <div class="feature-card"><div class="feature-title">Faster Throughput</div><p class="feature-desc">Eliminating the cashier station removes one of the biggest bottlenecks in fast casual.</p></div>
+        <div class="feature-card"><div class="feature-title">Multi-Location Ready</div><p class="feature-desc">Manage every location from a single dashboard as pilots expand into broader deployments.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <span class="label">Return on Investment</span><h2 class="section-title">See your savings.</h2><div class="divider"></div>
+      <div class="roi-wrap fade-in">
+        <div class="roi-left">
+          <p style="font-size:.95rem;color:var(--warm-gray);margin-bottom:40px;line-height:1.7;">Adjust the sliders to reflect your operation. FastPay's pricing is straightforward — a flat monthly technology fee per location, plus one-time hardware.</p>
+          <div class="roi-slider-wrap"><span class="roi-label">Bowls per day — <span id="bowls-display" class="roi-val">250</span></span><input class="roi-slider" type="range" id="roi-bowls" oninput="calcROI()"></div>
+          <div class="roi-slider-wrap"><span class="roi-label">Cashier wage ($/hr) — <span id="wage-display" class="roi-val">$20</span></span><input class="roi-slider" type="range" id="roi-wage" oninput="calcROI()"></div>
+          <div class="roi-slider-wrap"><span class="roi-label">Cashiers on shift — <span id="cashiers-display" class="roi-val">1</span></span><input class="roi-slider" type="range" id="roi-cashiers" oninput="calcROI()"></div>
+          <p class="assumption-note" id="roi-assumption-note"></p>
+        </div>
+        <div class="roi-right">
+          <span class="roi-result-label">Estimated Net Monthly Savings</span><div class="roi-result-value" id="roi-monthly">$0</div>
+          <span class="roi-result-label">Estimated Annual Labor Savings</span><div class="roi-result-value accent" id="roi-annual">$0</div>
+          <div class="roi-divider"></div>
+          <span class="roi-result-label">FastPay Monthly Technology Fee</span><div class="roi-result-value" style="font-size:1.6rem;" id="roi-fee">$299</div>
+          <span class="roi-result-label" style="margin-top:20px;">Hardware Payback</span><div class="roi-result-value" style="font-size:1.6rem;" id="roi-payback">Less than a week</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <span class="label">How We Compare</span><h2 class="section-title">Purpose-built for active assembly lines.</h2><div class="divider"></div>
+      <div class="table-wrap"><table class="comparison-table fade-in"><thead><tr><th>Capability</th><th class="highlight">FastPay</th><th>Traditional Cashier</th><th>Kiosk / Tablet</th><th>Other AI Systems</th></tr></thead><tbody>
+        <tr><td>Works during active assembly</td><td class="highlight"><span class="check">Yes</span></td><td><span class="cross">No</span></td><td><span class="cross">No</span></td><td><span class="cross">No</span></td></tr>
+        <tr><td>No guest or staff action required</td><td class="highlight"><span class="check">Yes</span></td><td><span class="cross">No</span></td><td><span class="cross">No</span></td><td><span class="partial">Partial</span></td></tr>
+        <tr><td>Reduces or removes cashier labor</td><td class="highlight"><span class="check">Yes</span></td><td><span class="cross">No</span></td><td><span class="partial">Partial</span></td><td><span class="cross">No</span></td></tr>
+        <tr><td>Works with existing line layout</td><td class="highlight"><span class="check">Yes</span></td><td><span class="check">Yes</span></td><td><span class="cross">No</span></td><td><span class="cross">No</span></td></tr>
+        <tr><td>Integrated analytics dashboard</td><td class="highlight"><span class="check">Yes</span></td><td><span class="cross">No</span></td><td><span class="partial">Limited</span></td><td><span class="partial">Varies</span></td></tr>
+      </tbody></table></div>
+    </div>
+  </section>
+
+  <section class="section section-dark" id="contact-restaurant"><div class="container"><div class="cta-inner"><span class="label label-light">Get Started</span><h2 class="cta-title">Ready to see it in your location?</h2><p class="cta-sub">Book a workflow review. We will review your line layout, order volume, and cashier workflow to estimate fit and deployment requirements.</p><div class="cta-form"><input class="cta-input" type="text" placeholder="Your name"><input class="cta-input" type="email" placeholder="Work email"><button class="btn-primary" onclick="handleDemoRequest()">Book a Workflow Review</button></div><p style="margin-top:20px;font-size:.8rem;color:rgba(253,250,246,.42);">Or email directly at <span id="contact-email-display"></span></p></div></div></section>
+  <section class="section section-alt"><div class="container"><span class="label">Assumptions</span><h2 class="section-title">Assumptions used on this page.</h2><div class="divider"></div><div class="assumptions-list" id="restaurant-assumptions-list"></div></div></section>
+</div>
+
+<div class="page" id="page-investor">
+  <section class="inv-hero"><div class="inv-hero-inner"><span class="label label-light">Investor Overview</span><h1 class="inv-hero-title">The checkout layer fast casual has been missing.</h1><p class="inv-hero-sub">FastPay is building the infrastructure that removes cashier bottlenecks at assembly-line restaurants — starting with a focused pilot wedge and a lightweight deployment model.</p></div></section>
+  <section class="section" style="padding:0;"><div class="container"><div class="metrics-bar fade-in" id="inv-metrics-bar"></div></div></section>
+  <section class="section"><div class="container"><span class="label">The Opportunity</span><h2 class="section-title">A market hiding in plain sight.</h2><div class="divider"></div><p class="section-sub">FastPay targets fast casual concepts with visible assembly lines, not QSRs. The initial wedge is labor and throughput at the point where the order is already built but payment slows the line.</p><div class="opp-grid fade-in" id="inv-opp-grid"></div></div></section>
+  <section class="section section-alt"><div class="container"><span class="label">Business Model</span><h2 class="section-title">Simple pricing. Fast operator payback.</h2><div class="divider"></div><div class="model-grid fade-in" id="inv-model-grid"></div></div></section>
+  <section class="section"><div class="container"><span class="label">Roadmap</span><h2 class="section-title">Where we are going.</h2><div class="divider"></div><div class="roadmap fade-in" id="inv-roadmap"></div></div></section>
+  <section class="section section-alt"><div class="container"><span class="label">The Raise</span><h2 class="section-title">Join the round.</h2><div class="divider"></div><div class="raise-card fade-in" id="inv-raise-card"></div></div></section>
+  <section class="section" id="inv-team-section"><div class="container"><span class="label">Leadership</span><h2 class="section-title">Built by operators and engineers.</h2><div class="divider"></div><div class="team-grid" id="inv-team-grid"></div></div></section>
+  <section class="section section-dark" id="contact-investor"><div class="container"><div class="cta-inner"><span class="label label-light">Connect</span><h2 class="cta-title">Interested in the round?</h2><p class="cta-sub">Reach out directly and we will share investor materials as pilot metrics, unit economics, and current round details are finalized.</p><button class="btn-primary" onclick="handleInvestorContact()">Request Investor Materials</button><p style="margin-top:20px;font-size:.8rem;color:rgba(253,250,246,.42);" id="invest-email-display"></p></div></div></section>
+  <section class="section section-alt"><div class="container"><span class="label">Assumptions</span><h2 class="section-title">Assumptions used on this page.</h2><div class="divider"></div><div class="assumptions-list" id="investor-assumptions-list"></div></div></section>
+</div>
+
+<div class="page dashboard-page" id="page-dashboard">
+  <section class="dashboard-shell">
+    <div class="dashboard-login" id="dashboard-login"><div class="dashboard-login-card"><span class="label label-light" id="client-portal-label">Client Portal</span><h1 class="dashboard-title" id="client-portal-title">FastPay Client Login</h1><p class="dashboard-muted" id="client-portal-subtitle">Access your FastPay data, deployment records, pilot notes, account follow-ups, and exports.</p><div class="dashboard-password-row"><input class="dashboard-input" type="password" id="dashboard-password" placeholder="Enter password" onkeydown="if(event.key==='Enter') unlockDashboard()"><button class="dash-btn" onclick="unlockDashboard()">Unlock</button></div><p class="dashboard-error" id="dashboard-error"></p><p class="dashboard-warning">This portal is in beta. For production client deployments, FastPay will secure account access through Cloudflare Access or a dedicated backend login.</p></div></div>
+    <div class="dashboard-app" id="dashboard-app" style="display:none;"><div class="dashboard-topbar"><div><span class="label label-light" id="client-portal-app-label">Client Data Portal</span><h1 class="dash-title" id="client-portal-app-title">FastPay Client Portal</h1><p class="dashboard-muted" id="client-portal-app-sub">Account data, deployment records, sales pipeline notes, pilot tasks, costs, and backups in one secure workspace.</p></div><div class="dash-actions"><button class="dash-btn ghost" onclick="exportDashboardData()">Export Data</button><label class="dash-btn ghost" style="cursor:pointer;">Import Data<input type="file" accept="application/json" onchange="importDashboardData(event)" style="display:none;"></label><button class="dash-btn ghost" onclick="resetDashboardData()">Reset Portal Data</button><button class="dash-btn ghost" onclick="lockDashboard()">Lock</button></div></div><div class="dash-tabs" id="dash-tabs"></div><div class="dash-panel" id="dash-content"></div></div>
+  </section>
+</div>
+
+<footer><div class="footer-logo">Fast<span>Pay</span></div><p class="footer-sub" id="footer-sub"></p></footer>
+</div><!-- /site-content -->
+
+<script>
+const SEED_VERSIONS = [
+  { id:1, version:"v6.6", date:"2026-05-23", status:"current", name:"FastPay", summary:"Kalman crash fixed (statePost.flatten()). Start Service merged to single button. index.html route + matrix legend fixed. system.html 2-button layout + true green status nodes. Extended confidence log with full factor breakdown. Flow data logging. Pattern analyzer v2.", changes:["Kalman get_state() TypeError fixed — statePost.flatten() added at 3 crash sites","Start Service button merged (Start Scanning + Start Detection → /api/service/start)","index.html: /api/payment-success route added, matrix legend corrected","system.html: 2-button layout, true-green status nodes","Extended confidence log: undone, factor_conf/station/motion/history scores, bonus_signal/prob/prior/cooc/grid, flow_item, flow_confidence, flow_agree, trigger columns","decision_matrix() now returns factors dict — every detection logs all raw sub-scores","detect_zone() stores full flow_result on bowl dict; flow item, confidence, agreement logged on every Trigger A","mark_confidence_log_undone() marks undone=YES on most recent matching row","pattern_analyzer v2: analyze_flow_accuracy(), analyze_factor_contributions(), recommend_weights(), load_confidence_log_v2(), build_report() updated"], camera:"1920×1080 @ 60fps", matrix:"Station 40% / Claude 35% / Motion 15% / History 10%", files:"app_two_camera.py, index.html, spatial_grid.py, restaurants.json", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:2, version:"v6.5", date:"2026-05-22", status:"archived", name:"FastPay", summary:"Overlay consolidated (no duplicate blocks). Optical flow attribution added. Bowl N floating label on camera feed. Flow arrow shows scoop origin cell → bowl centroid.", changes:["draw_debug_overlay rewritten as single clean function — removed 2 duplicate status blocks","compute_optical_flow_attribution() added — uses cv2.calcOpticalFlowFarneback() to trace scoop motion","Orange flow arrow drawn on camera feed from scoop source cell to bowl centroid for 2.5s","Bowl N floating label added to camera feed","Optical flow item attribution returned alongside Claude Vision result"], camera:"1920×1080 @ 60fps", matrix:"Station 40% / Claude 35% / Motion 15% / History 10%", files:"app_two_camera.py, index.html, spatial_grid.py, restaurants.json", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:3, version:"v6.4", date:"2026-05-22", status:"archived", name:"FastPay", summary:"FIFO bowl queue wired in. Multi-bowl at same station now handled correctly. Bowl 2 queues and activates on Bowl 1 exit.", changes:["FIFO queue enforced — Bowl 1 always first bowl that entered","Multi-bowl at same station: Bowl 2 queues, activates on Bowl 1 exit","Bowl IDs now stable and sequential throughout session"], camera:"1920×1080 @ 60fps", matrix:"Station 40% / Claude 35% / Motion 15% / History 10%", files:"app_two_camera.py", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:4, version:"v6.3", date:"2026-05-22", status:"archived", name:"FastPay", summary:"MOG2 permanently removed. Bowl detection rebuilt using shape+color+motion in _detect_blobs(). No warm-up period. Kalman tracks exempt from grid mask.", changes:["MOG2 fully removed — get_bg_subtractor() and reset_bg_subtractor() preserved only for /api/reset_bg route","_detect_blobs() added: shape+color+motion replaces background subtraction","No warm-up period required — system works immediately on launch","Kalman tracks exempt from grid mask — bowl can move over container cells without being dropped"], camera:"1920×1080 @ 60fps", matrix:"Station 40% / Claude 35% / Motion 15% / History 10%", files:"app_two_camera.py", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:5, version:"v6.2", date:"2026-05-22", status:"archived", name:"FastPay", summary:"Six runtime bugs fixed discovered during v6.1 testing.", changes:["grid boost: result → det variable name fix","bowl_entry_frame: frame index off-by-one corrected","update_last_billed: timestamp not persisting — fixed","zones overlay: drawing on wrong layer — fixed","_frame_diff_pixels: returning None on cold start — fixed","BG_HISTORY duplicate constant removed"], camera:"1920×1080 @ 60fps", matrix:"Station 40% / Claude 35% / Motion 15% / History 10%", files:"app_two_camera.py", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:6, version:"v6.1", date:"2026-05-22", status:"archived", name:"FastPay", summary:"Grid boost import fixed. Camera prompt corrected to overhead 45°. Station weight raised 0.30→0.40. STATION_ITEM_PRIOR flat bonus +15. Naya menu inlined.", changes:["Grid boost import fixed — was silently not loading","Camera prompt corrected: overhead → 45° angle specification","Station weight raised: 0.30 → 0.40","STATION_ITEM_PRIOR flat bonus added: +15","Signal boost flat bonus: +0–20","Order probability bonus: +0–20","Grid boost range: −12 to +18","Naya menu inlined into restaurants.json"], camera:"1920×1080 @ 60fps", matrix:"Station 40% / Claude 35% / Motion 15% / History 10%", files:"app_two_camera.py, restaurants.json", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:7, version:"v6.0", date:"2026-05-18", status:"archived", name:"FastPay", summary:"Post-Naya demo rebuild. MOG2+Kalman tracker introduced. 4-trigger API (A/B/C/D). Grid editor v6 with live camera + drag-to-draw. Resolution locked to 1920×1080 @ 60fps.", changes:["Post-demo rebuild — cleaned up all demo hacks","MOG2 + Kalman tracker added for bowl detection","4-trigger API: Trigger A (periodic), B (motion delta), C (new bowl), D (lid close/wrap)","Grid editor v6: live camera feed, drag-to-draw rectangles","Resolution locked: 1920×1080 @ 60fps","4-camera → 2-camera architecture (USB hub constraint at Naya)","Manual exposure/WB/gain lock added"], camera:"1920×1080 @ 60fps", matrix:"Station 35% / Claude 40% / Motion 20% / History 5%", files:"app_two_camera.py, app_three_camera.py, app_four_camera.py, grid_editor_v6.html", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:8, version:"v5.2", date:"2026-05-17", status:"archived", name:"FastPay", summary:"Naya Wall Street demo day build. 2-camera forced by USB hub limit. CAP_PROP_BUFFERSIZE=1 fix. Demo Pay button.", changes:["2-camera build forced by USB hub limit at Naya","CAP_PROP_BUFFERSIZE=1 fix — eliminated 1–2s lag from buffered frames","Demo Pay button added for presentation","EXTERNAL_INDEXES hardcoded for Naya camera positions","Naya Wall Street demo completed"], camera:"1920×1080 @ 60fps", matrix:"Station 30% / Claude 40% / Motion 20% / History 10%", files:"app_two_camera.py, index.html", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:9, version:"v5.0", date:"2026-05-01", status:"archived", name:"FastPay", summary:"Project renamed FastPay. 4-camera live build. Decision matrix formalized. Stripe live mode. NYC tax 8.875%. Full analytics suite. Launch sheet.", changes:["Renamed from Linecheck AI → FastPay","4-camera live build","Decision matrix formalized: Claude 40% + Station 30% + Motion 20% + History 10%","Stripe live mode enabled","NYC tax: 8.875%","Analytics suite added","Launch sheet document created","Provisional patent drafted"], camera:"1920×1080 @ 60fps", matrix:"Station 30% / Claude 40% / Motion 20% / History 10%", files:"app.py, index.html, restaurants.json", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:10, version:"v4.5", date:"2026-04-01", status:"archived", name:"Linecheck AI", summary:"Spatial grid introduced (CLI calibration). Co-occurrence engine. Competitive analysis. Pricing strategy documents. Business documents first version.", changes:["Spatial grid added — CLI calibration tool","Co-occurrence engine: tracks item combinations per bowl","Competitive analysis document","Pricing strategy document","Business documents first version"], camera:"1080p", matrix:"Claude dominant / no formal matrix", files:"app.py, spatial_grid.py", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:11, version:"v4.0", date:"2026-04-01", status:"archived", name:"Linecheck AI", summary:"YOLOv8 trainer pipeline added. Pattern analysis engine. Cost tracking. 4-camera architecture concept. Restaurant config system (restaurants.json).", changes:["YOLOv8 trainer pipeline — frame extraction + auto-labeling from confidence log","Pattern analysis engine","Cost tracking dashboard","4-camera architecture concept designed","restaurants.json config system introduced","Renamed: Assembly Line AI → Linecheck AI"], camera:"1080p", matrix:"Claude dominant / no formal matrix", files:"app.py, restaurants.json", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:12, version:"v3.0", date:"2026-03-01", status:"archived", name:"Assembly Line AI", summary:"Multi-station routing. Worker screen added. First analytics dashboard. Station sequence concept introduced.", changes:["Multi-station routing logic","Worker screen (index.html) added","First analytics dashboard","Station sequence concept introduced"], camera:"720p–1080p", matrix:"None — Claude Vision only", files:"app.py, templates/index.html, templates/dashboard.html", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:13, version:"v2.0", date:"2026-02-01", status:"archived", name:"Assembly Line AI", summary:"First real billing integration. Stripe test mode. Claude Vision detection loop (2s cooldown). Multi-restaurant ingredient library.", changes:["Stripe test mode integrated","Claude Vision detection loop: 2s cooldown","Real billing events firing","Multi-restaurant ingredient library (Chipotle, Cava, Sweetgreen, Naya, Dig, Flower Child)","Ingredient stations grouped by category"], camera:"720p", matrix:"None — Claude Vision only", files:"app.py, templates/index.html", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+  { id:14, version:"v1.0", date:"2026-01-01", status:"archived", name:"Assembly Line AI", summary:"Original proof-of-concept. UI demo only — no real camera, no billing. Single camera feed, manual button simulation. Chipotle-style generic menu.", changes:["Initial concept built","UI demo — simulated assembly line","Manual button simulation for ingredient detection","Single camera feed (no real CV)","Chipotle-style generic menu","Basic Flask server"], camera:"None (simulated)", matrix:"None", files:"app.py, templates/index.html", path:"/Users/nebesayas/Desktop/Startup Idea/app.py" },
+];
+
+const SEED_CONTACTS = [{ id:1, company:"Naya", name:"Manager on duty", role:"Operations", category:"Pilot Restaurant", email:"", phone:"", strength:"warm", lastContact:"2026-05-23", nextAction:"Follow-up on footage access and results review", notes:"Completed demo at Wall Street location. Need confidence log data and ongoing pilot access." }];
+
+const SEED_KEY_CONTACTS = [
+  { id:1, name:"", role:"Patent Attorney", category:"Legal", company:"", email:"", phone:"", strength:"none", notes:"Need to find and engage a patent attorney to review provisional application before filing.", lastContact:"", nextAction:"Find patent attorney — search IP firms specializing in computer vision / SaaS" },
+  { id:2, name:"Naya Operations", role:"Operations Lead", category:"Pilot Partner", company:"Naya", email:"", phone:"", strength:"warm", notes:"Completed demo. Key relationship for getting ongoing footage and access.", lastContact:"2026-05-23", nextAction:"Schedule follow-up call to review demo results" },
+];
+
+const SEED_COSTS = [
+  { id:1, date:"2026-05-01", category:"Hardware", item:"Logitech webcams (x2)", amount:120, vendor:"Amazon", notes:"Used at Naya demo" },
+  { id:2, date:"2026-05-01", category:"Hardware", item:"USB hub", amount:35, vendor:"Amazon", notes:"Required for 2-camera setup" },
+  { id:3, date:"2026-05-10", category:"Software", item:"Claude API usage", amount:45, vendor:"Anthropic", notes:"Vision inference during dev" },
+];
+
+const SEED_TASKS = [
+  { id:1, title:"Collect Naya pilot footage + confidence_log.csv", status:"in-progress", priority:"high", due:"2026-06-01", area:"Engineering", notes:"Raw video needed for YOLOv8 fine-tuning. Only use frames where outcome=BILLED and score≥80." },
+  { id:2, title:"Fine-tune YOLOv8 on Naya data", status:"todo", priority:"high", due:"2026-06-15", area:"Engineering", notes:"~500-2000 labeled frames. One overnight run, ~4-6hrs on laptop GPU or Google Colab." },
+  { id:3, title:"File provisional patent", status:"todo", priority:"high", due:"2026-06-30", area:"Legal", notes:"Draft complete. Needs attorney review before filing." },
+  { id:4, title:"Identify 2 more mom & pop pilots (NYC neighborhood blitz)", status:"todo", priority:"high", due:"2026-06-15", area:"Sales", notes:"Walk in, ask for owner not manager. Offer 60-day free pilot. No deck." },
+  { id:5, title:"Build accuracy case study from Naya", status:"todo", priority:"medium", due:"2026-07-01", area:"Sales", notes:"Primary sales weapon. One number: 'Your cashier error rate cost you $X this month.'" },
+  { id:6, title:"Price anchoring test with pilot 2", status:"todo", priority:"medium", due:"2026-07-15", area:"Sales", notes:"Let them name price first. Target <$300/mo single location." },
+  { id:7, title:"Upgrade cameras — evaluate Basler vs SVPRO", status:"todo", priority:"medium", due:"2026-07-01", area:"Engineering", notes:"SVPRO $80-120 for pilot. Basler ace2 $280-320 for production. Basler needs Pylon SDK (~20 lines code change)." },
+];
+
+const SEED_NOTES = [
+  { id:1, title:"Naya Demo Debrief", date:"2026-05-23", tags:["demo","milestone"], pinned:true, body:"Completed first live demo at Naya Wall Street. System ran on 2-camera setup (USB hub constraint). Key issue: CAP_PROP_BUFFERSIZE lag fixed night before. Bowl tracking worked. Need to review confidence log for accuracy numbers. Footage from this session is the foundation for YOLOv8 training dataset." },
+  { id:2, title:"Go-to-Market: Mom & Pop Strategy", date:"2026-05-25", tags:["sales","strategy"], pinned:false, body:"Never pitch the technology. Pitch the number.\n\nFor mom & pop: Walk in, ask for owner (not manager). Say: 'We're running a pilot with 3 restaurants in this area. We put cameras on your assembly line free for 60 days, you keep the data, we show you what it's worth. No contract.'\n\nAfter 30 days, return with: 'Your cashier error rate cost approximately $X this month.'\n\nLet them name price before you do. Target <$300/mo to start." },
+  { id:3, title:"Patent Application Status", date:"2026-05-23", tags:["legal","patent"], pinned:true, body:"Provisional patent drafted. Covers: AI computer vision system for automatic ingredient detection at assembly-line restaurants, bowl tracking through stations, automatic billing at checkout.\n\nNext step: Find IP attorney specializing in computer vision / SaaS. Review and refine claims. File formal provisional before building too publicly." },
+  { id:4, title:"Hardware Upgrade Roadmap", date:"2026-05-24", tags:["engineering","hardware"], pinned:false, body:"Current: Logitech webcams ($60 each) — rolling shutter, no manual exposure lock.\n\nBudget upgrade: SVPRO with varifocal 2.8-12mm lens, $80-120. UVC compliant, zero code changes, manual exposure control. C-mount optics.\n\nProduction: Basler ace2 USB3 $280-320, Sony IMX334 sensor, global shutter, 60fps @ 5MP, 3-yr warranty. Needs Pylon SDK (~20 lines code change in init_cameras()).\n\nTop of line: FLIR Blackfly S $400-500, 4-week lead time." },
+];
+
+const SEED_DECISIONS = [
+  { id:1, date:"2026-05-22", title:"Remove MOG2, replace with shape+color+motion", area:"Engineering", decision:"Permanently removed MOG2 background subtraction. Replaced with _detect_blobs() using shape+color+motion detection.", alternatives:"Keep MOG2 with longer warm-up; switch to frame differencing only", rationale:"MOG2 required 30-60s warm-up, failed on camera movement, fragile to lighting changes. New approach works immediately on launch with no background model.", outcome:"current", impact:"high" },
+  { id:2, date:"2026-05-17", title:"2-Camera vs 4-Camera for Naya Demo", area:"Engineering", decision:"Ran 2-camera setup at Naya demo due to USB hub bandwidth limit.", alternatives:"Buy powered USB hub ($40); use USB-C hub; use PCIe card", rationale:"Demo was next morning. No time to source hardware. 2 cameras covered the critical stations. Data collected regardless.", outcome:"current", impact:"medium" },
+  { id:3, date:"2026-05-22", title:"Station weight raised to 40%", area:"Engineering", decision:"Raised station weight in decision matrix from 30% to 40%. Claude Vision dropped from 40% to 35%. Motion dropped from 20% to 15%.", alternatives:"Keep Claude dominant at 40%; raise grid boost instead; add new signal type", rationale:"Station+grid combo is the most reliable signal. Claude Vision is slow and costly. Station match + grid cell position gives near-certain item ID without API call.", outcome:"current", impact:"high" },
+  { id:4, date:"2026-05-01", title:"Rename to FastPay", area:"Business", decision:"Renamed project from Linecheck AI to FastPay.", alternatives:"Keep Linecheck AI; rename to PayLine; rename to BowlPay", rationale:"FastPay is customer-facing, benefit-oriented, and memorable. Linecheck AI was engineering-focused. The product is about speed and payment, not line-checking.", outcome:"current", impact:"medium" },
+  { id:5, date:"2026-04-01", title:"Use Claude Vision as primary detection signal", area:"Engineering", decision:"Claude Vision (via Anthropic API) used as primary item classification signal in decision matrix.", alternatives:"Pure YOLOv8 local model; heuristic color matching; manual labeling only", rationale:"No labeled training data yet. Claude Vision provides high accuracy out of the box for food identification. Cost is manageable at pilot scale. Plan to replace with local YOLOv8 once Naya footage is available.", outcome:"superseded", impact:"high" },
+];
+
+const SEED_MILESTONES = [
+  { id:1, title:"First working prototype", date:"2026-01-01", status:"done", description:"v1.0 — simulated demo showing the concept end-to-end.", category:"Engineering" },
+  { id:2, title:"First real billing event", date:"2026-02-01", status:"done", description:"v2.0 — Stripe test mode. Claude Vision detecting real ingredients.", category:"Engineering" },
+  { id:3, title:"First live restaurant demo (Naya)", date:"2026-05-17", status:"done", description:"v5.2 — 2-camera system running live at Naya Wall Street. First real-world footage collected.", category:"Milestone" },
+  { id:4, title:"Provisional patent drafted", date:"2026-05-23", status:"done", description:"Full provisional patent application written covering core IP.", category:"Legal" },
+  { id:5, title:"File provisional patent", date:"2026-06-30", status:"upcoming", description:"Attorney review + formal filing.", category:"Legal" },
+  { id:6, title:"YOLOv8 model trained on Naya data", date:"2026-06-15", status:"upcoming", description:"Local model replacing Claude Vision. <150ms inference, no API cost.", category:"Engineering" },
+  { id:7, title:"2nd pilot restaurant signed", date:"2026-07-01", status:"upcoming", description:"Mom & pop pilot. Neighborhood blitz strategy.", category:"Sales" },
+  { id:8, title:"First paying customer", date:"2026-09-01", status:"upcoming", description:"<$300/mo single location. First revenue.", category:"Sales" },
+  { id:9, title:"10-location regional operator meeting", date:"2026-12-01", status:"upcoming", description:"Bottom-up enterprise entry with case study data in hand.", category:"Sales" },
+];
+
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const moneyToNumber = (value) => Number(String(value).replace(/[^0-9.]/g, '')) || 0;
+
+
+function unlockSite(event) {
+  if (event) event.preventDefault();
+  const input = document.getElementById('site-password');
+  const error = document.getElementById('site-lock-error');
+  if (input && input.value === CONFIG.SITE_PASSWORD) {
+    localStorage.setItem('fp_site_unlocked','1');
+    document.body.classList.add('site-unlocked');
+    if (error) error.textContent = '';
+  } else {
+    if (error) error.textContent = 'Incorrect password.';
+    if (input) { input.value = ''; input.focus(); }
+  }
+}
+function lockSite() {
+  localStorage.removeItem('fp_site_unlocked');
+  document.body.classList.remove('site-unlocked');
+  const input = document.getElementById('site-password');
+  if (input) input.value = '';
+}
+function initSiteLock() {
+  const title = document.getElementById('site-lock-title');
+  const subtitle = document.getElementById('site-lock-subtitle');
+  if (title && CONFIG.SITE_LOCK_TITLE) title.textContent = CONFIG.SITE_LOCK_TITLE;
+  if (subtitle && CONFIG.SITE_LOCK_SUBTITLE) subtitle.textContent = CONFIG.SITE_LOCK_SUBTITLE;
+  if (localStorage.getItem('fp_site_unlocked') === '1') {
+    document.body.classList.add('site-unlocked');
+  } else {
+    const input = document.getElementById('site-password');
+    if (input) setTimeout(() => input.focus(), 50);
+  }
+}
+
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(t => t.classList.remove('active'));
+  const page = $('page-' + id); if (page) page.classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function scrollToContact() {
+  const active = document.querySelector('.page.active');
+  const target = active && active.id === 'page-investor' ? 'contact-investor' : 'contact-restaurant';
+  const el = $(target); if (el) el.scrollIntoView({ behavior:'smooth' });
+}
+function handleDemoRequest() { window.location.href = 'mailto:' + CONFIG.CONTACT_RESTAURANT + '?subject=Demo Request — FastPay'; }
+function handleInvestorContact() { window.location.href = 'mailto:' + CONFIG.CONTACT_INVESTOR + '?subject=Investor Inquiry — FastPay'; }
+
+function initROIInputs() {
+  [['roi-bowls',CONFIG.ROI_BOWLS_MIN,CONFIG.ROI_BOWLS_MAX,CONFIG.ROI_BOWLS_DEFAULT],['roi-wage',CONFIG.ROI_WAGE_MIN,CONFIG.ROI_WAGE_MAX,CONFIG.ROI_WAGE_DEFAULT],['roi-cashiers',CONFIG.ROI_CASHIERS_MIN,CONFIG.ROI_CASHIERS_MAX,CONFIG.ROI_CASHIERS_DEFAULT]].forEach(([id,min,max,value]) => { const el=$(id); if(el){ el.min=min; el.max=max; el.value=value; } });
+}
+function calcROI() {
+  const bowls = +(($('roi-bowls')||{value:CONFIG.ROI_BOWLS_DEFAULT}).value);
+  const wage = +(($('roi-wage')||{value:CONFIG.ROI_WAGE_DEFAULT}).value);
+  const cashiers = +(($('roi-cashiers')||{value:CONFIG.ROI_CASHIERS_DEFAULT}).value);
+  const monthlyLabor = wage * CONFIG.OPERATING_HOURS_DAY * cashiers * CONFIG.OPERATING_DAYS_MONTH;
+  const annualLabor = monthlyLabor * 12;
+  const fee = moneyToNumber(CONFIG.MONTHLY_PER_LOCATION);
+  const hardware = moneyToNumber(CONFIG.HARDWARE_COST);
+  const netMonthly = Math.max(0, monthlyLabor - fee);
+  const payback = netMonthly > 0 ? Math.ceil(hardware / (netMonthly / CONFIG.OPERATING_DAYS_MONTH)) : null;
+  const paybackText = payback && payback <= 7 ? 'Less than a week' : (payback ? payback + ' days' : 'N/A');
+  if($('bowls-display')) $('bowls-display').textContent = bowls;
+  if($('wage-display')) $('wage-display').textContent = '$' + wage;
+  if($('cashiers-display')) $('cashiers-display').textContent = cashiers;
+  if($('roi-monthly')) $('roi-monthly').textContent = '$' + Math.round(netMonthly).toLocaleString();
+  if($('roi-annual')) $('roi-annual').textContent = '$' + Math.round(annualLabor).toLocaleString();
+  if($('roi-fee')) $('roi-fee').textContent = CONFIG.MONTHLY_PER_LOCATION;
+  if($('roi-payback')) $('roi-payback').textContent = paybackText;
+  if($('roi-assumption-note')) $('roi-assumption-note').textContent = `Assumptions: ${CONFIG.OPERATING_HOURS_DAY} operating hours/day, ${CONFIG.OPERATING_DAYS_MONTH} operating days/month, ${CONFIG.MONTHLY_PER_LOCATION} monthly technology fee, ${CONFIG.HARDWARE_COST} one-time hardware fee.`;
+}
+function buildSite() {
+  if($('stat-accuracy')) $('stat-accuracy').textContent = CONFIG.DETECTION_ACCURACY;
+  if($('stat-accuracy-label')) $('stat-accuracy-label').textContent = CONFIG.DETECTION_ACCURACY_LABEL;
+  if($('stat-checkout')) $('stat-checkout').textContent = CONFIG.CHECKOUT_TIME;
+  if($('stat-cashier-labor')) $('stat-cashier-labor').textContent = CONFIG.CASHIER_LABOR_DISPLAY;
+  if($('stat-payback')) $('stat-payback').textContent = CONFIG.HARDWARE_PAYBACK;
+  if($('inv-metrics-bar')) $('inv-metrics-bar').innerHTML = `
+    <div class="metric-item"><div class="metric-value">${esc(CONFIG.TAM)}</div><div class="metric-label">Total Addressable Market</div></div>
+    <div class="metric-item"><div class="metric-value">${esc(CONFIG.DETECTION_ACCURACY)}</div><div class="metric-label">${esc(CONFIG.DETECTION_ACCURACY_LABEL)}</div></div>
+    <div class="metric-item"><div class="metric-value">${esc(CONFIG.PILOT_LOCATIONS)}</div><div class="metric-label">Pilot Status</div></div>`;
+  if($('inv-opp-grid')) $('inv-opp-grid').innerHTML = `
+    <div class="opp-card"><div class="opp-num">${esc(CONFIG.TAM)}</div><div class="feature-title">Total Addressable Market</div><p class="opp-desc">FastPay is focused on fast casual restaurants where made-to-order assembly lines create a checkout bottleneck that traditional POS systems do not remove.</p></div>
+    <div class="opp-card"><div class="opp-num">${esc(CONFIG.CASHIER_LABOR_COST)}</div><div class="feature-title">Cashier Labor Assumption</div><p class="opp-desc">Directional hourly wage assumption used to show operator ROI. See assumptions below for the New York City context.</p></div>
+    <div class="opp-card"><div class="opp-num">${esc(CONFIG.FAST_CASUAL_UNITS)}</div><div class="feature-title">Fast Casual Units, U.S. — NOT QSRs</div><p class="opp-desc">Initial focus excludes QSRs and targets fast casual concepts with visible assembly lines. Source: ${esc(CONFIG.FAST_CASUAL_SOURCE)}.</p></div>
+    <div class="opp-card"><div class="opp-num">0</div><div class="feature-title">Direct Competitors</div><p class="opp-desc">We currently see no direct competitor purpose-built for AI-powered checkout on sequential fast casual assembly lines.</p></div>`;
+  if($('inv-model-grid')) $('inv-model-grid').innerHTML = `
+    <div class="model-card"><span class="model-tag">Primary</span><div class="model-title">Technology Fee</div><div class="model-amount">${esc(CONFIG.MONTHLY_PER_LOCATION)}<span style="font-size:1rem;color:var(--warm-gray);font-family:var(--font-body);font-weight:400"> / location / month</span></div><p class="model-desc">Flat monthly technology fee per location. Includes software access, updates, dashboard access, and support during pilot deployment.</p></div>
+    <div class="model-card"><span class="model-tag">Setup</span><div class="model-title">Hardware</div><div class="model-amount">${esc(CONFIG.HARDWARE_COST)}<span style="font-size:1rem;color:var(--warm-gray);font-family:var(--font-body);font-weight:400"> one-time</span></div><p class="model-desc">One-time hardware fee. Under the current assumptions, hardware payback is expected to be ${esc(CONFIG.HARDWARE_PAYBACK.toLowerCase())}.</p></div>`;
+  const milestones = [CONFIG.MILESTONE_1,CONFIG.MILESTONE_2,CONFIG.MILESTONE_3,CONFIG.MILESTONE_4,CONFIG.MILESTONE_5,CONFIG.MILESTONE_6];
+  if($('inv-roadmap')) $('inv-roadmap').innerHTML = milestones.map(m => `<div class="roadmap-item"><div class="roadmap-quarter">${esc(m.quarter)}</div><div class="roadmap-title">${esc(m.title)}</div><p class="roadmap-desc">${esc(m.desc)}</p></div>`).join('');
+  if($('inv-raise-card')) $('inv-raise-card').innerHTML = `<div><span class="label label-light">Round Details</span><h3 style="font-family:var(--font-display);font-size:2.5rem;color:var(--white);margin-bottom:32px;letter-spacing:-.02em;">${esc(CONFIG.RAISE_AMOUNT)} ${esc(CONFIG.RAISE_TYPE)}</h3><div class="raise-terms"><div><div class="raise-term-label">Instrument</div><div class="raise-term-value">${esc(CONFIG.INSTRUMENT)}</div></div><div><div class="raise-term-label">Valuation Cap</div><div class="raise-term-value">${esc(CONFIG.VALUATION_CAP)}</div></div><div><div class="raise-term-label">Round Size</div><div class="raise-term-value">${esc(CONFIG.RAISE_AMOUNT)}</div></div><div><div class="raise-term-label">Target Close</div><div class="raise-term-value">${esc(CONFIG.CLOSING_DATE)}</div></div></div></div><div><span class="label label-light">Use of Funds</span><div class="use-of-funds">${fundRow('Engineering & Infrastructure',CONFIG.USE_ENGINEERING)}${fundRow('Pilot Deployments',CONFIG.USE_PILOTS)}${fundRow('Sales & Partnerships',CONFIG.USE_SALES)}${fundRow('Operations & Legal',CONFIG.USE_OPERATIONS)}</div></div>`;
+  if($('inv-team-grid')) $('inv-team-grid').innerHTML = (CONFIG.TEAM||[]).map(m => `<div class="team-card"><div class="team-name">${esc(m.name)}</div><div class="team-title">${esc(m.title)}</div><p class="team-bio">${esc(m.bio)}</p></div>`).join('');
+  const assumptions = CONFIG.ASSUMPTIONS.map((a,i) => `<div class="assumption-item"><strong>${i+1}.</strong> ${esc(a)}</div>`).join('');
+  if($('restaurant-assumptions-list')) $('restaurant-assumptions-list').innerHTML = assumptions;
+  if($('investor-assumptions-list')) $('investor-assumptions-list').innerHTML = assumptions;
+  const restaurantMail = `<a class="inline-email-link" href="mailto:${esc(CONFIG.CONTACT_RESTAURANT)}">${esc(CONFIG.CONTACT_RESTAURANT)}</a>`;
+  const investorMail = `<a class="inline-email-link" href="mailto:${esc(CONFIG.CONTACT_INVESTOR)}">${esc(CONFIG.CONTACT_INVESTOR)}</a>`;
+  if($('contact-email-display')) $('contact-email-display').innerHTML = restaurantMail;
+  if($('invest-email-display')) $('invest-email-display').innerHTML = investorMail;
+  if($('footer-sub')) $('footer-sub').innerHTML = `${restaurantMail} &nbsp; | &nbsp; ${esc(CONFIG.COMPANY_NAME)} — All rights reserved.`;
+}
+function fundRow(label, pct) { return `<div class="fund-bar-wrap"><div class="fund-bar-label"><span>${esc(label)}</span><span>${esc(pct)}</span></div><div class="fund-bar-track"><div class="fund-bar-fill" style="width:${esc(pct)}"></div></div></div>`; }
+
+const observer = new IntersectionObserver((entries) => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:.12});
+function initObserver() { document.querySelectorAll('.fade-in').forEach(el => observer.observe(el)); }
+
+let dashTab = 'overview';
+let dash = {};
+const DASH_TABS = [
+  ['overview','Overview'],['versions','Versions'],['roadmap','Roadmap'],['tasks','Tasks'],['sales','Pipeline'],['contacts','Contacts'],['costs','Costs'],['notes','Notes']
+];
+function storeGet(key, fb) { try { return JSON.parse(localStorage.getItem(key)) || fb; } catch(e) { return fb; } }
+function storeSet(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function initDashboard() {
+  dash = {
+    versions: storeGet('fp_versions', SEED_VERSIONS), contacts: storeGet('fp_contacts', SEED_CONTACTS), keyContacts: storeGet('fp_key_contacts', SEED_KEY_CONTACTS),
+    costs: storeGet('fp_costs', SEED_COSTS), tasks: storeGet('fp_tasks', SEED_TASKS), notes: storeGet('fp_notes', SEED_NOTES),
+    decisions: storeGet('fp_decisions', SEED_DECISIONS), milestones: storeGet('fp_milestones', SEED_MILESTONES)
+  };
+}
+function unlockDashboard() { const input=$('dashboard-password'); if(input && input.value === CONFIG.DASHBOARD_PASSWORD) { localStorage.setItem('fp_dash_unlocked','1'); showDashboardApp(); } else if($('dashboard-error')) $('dashboard-error').textContent='Incorrect password.'; }
+function lockDashboard() { localStorage.removeItem('fp_dash_unlocked'); if($('dashboard-app')) $('dashboard-app').style.display='none'; if($('dashboard-login')) $('dashboard-login').style.display='flex'; }
+function showDashboardApp() { if($('dashboard-login')) $('dashboard-login').style.display='none'; if($('dashboard-app')) $('dashboard-app').style.display='block'; renderDashboard(); }
+function renderDashboard() { renderDashTabs(); if($('dash-content')) $('dash-content').innerHTML = renderDashContent(); }
+function renderDashTabs() { if(!$('dash-tabs')) return; $('dash-tabs').innerHTML = DASH_TABS.map(([id,label]) => `<button class="dash-tab ${dashTab===id?'active':''}" onclick="setDashTab('${id}')">${label}</button>`).join(''); }
+function setDashTab(id) { dashTab=id; renderDashboard(); }
+function metric(label, value) { return `<div class="dash-card"><div class="dash-card-label">${esc(label)}</div><div class="dash-card-value">${esc(value)}</div></div>`; }
+function pill(text) { return `<span class="dash-pill">${esc(text)}</span>`; }
+function renderDashContent() {
+  if(dashTab==='overview') return renderOverview();
+  if(dashTab==='versions') return renderVersions();
+  if(dashTab==='roadmap') return renderRoadmap();
+  if(dashTab==='tasks') return renderTasks();
+  if(dashTab==='sales') return renderSales();
+  if(dashTab==='contacts') return renderContacts();
+  if(dashTab==='costs') return renderCosts();
+  if(dashTab==='notes') return renderNotes();
+  return '';
+}
+function renderOverview() {
+  const activeTasks = dash.tasks.filter(t=>t.status!=='done').length;
+  const prospects = dash.contacts.filter(c=>(c.stage||c.category||'').toLowerCase().includes('prospect') || (c.category||'').toLowerCase().includes('pilot')).length;
+  const totalCosts = dash.costs.reduce((s,c)=>s+Number(c.amount||0),0);
+  const nextTasks = dash.tasks.filter(t=>t.status!=='done').slice(0,5).map(t=>`<div class="dash-row"><div><div class="dash-row-title">${esc(t.title)}</div><div class="dash-row-sub">${esc(t.area)} · due ${esc(t.due||'n/a')}</div></div>${pill(t.priority||'')}</div>`).join('');
+  return `<div class="dash-grid">${metric('Open Tasks', activeTasks)}${metric('Sales / Pilot Records', dash.contacts.length)}${metric('Key Contacts', dash.keyContacts.length)}${metric('Total Costs', '$'+totalCosts.toLocaleString())}${metric('Versions Logged', dash.versions.length)}${metric('Milestones', dash.milestones.length)}</div><div class="dash-card"><div class="dash-card-label">Next Priorities</div><div class="dash-list">${nextTasks || '<div class="dash-empty">No open tasks.</div>'}</div></div>`;
+}
+function deleteItem(collection, key, id) { dash[collection] = dash[collection].filter(x => x.id !== id); storeSet(key, dash[collection]); renderDashboard(); }
+function renderTasks() {
+  return `${taskForm()}<div class="dash-list">${dash.tasks.map(t=>`<div class="dash-row"><div><div class="dash-row-title">${esc(t.title)}</div><div class="dash-row-sub">${esc(t.notes||'')}<br><span class="dash-meta">${esc(t.area)} · ${esc(t.status)} · due ${esc(t.due||'n/a')}</span></div></div><div>${pill(t.priority)}<button class="dash-link-btn danger" onclick="deleteItem('tasks','fp_tasks',${t.id})">Delete</button></div></div>`).join('') || '<div class="dash-empty">No tasks yet.</div>'}</div>`;
+}
+function taskForm() { return `<form class="dash-form" onsubmit="addTask(event)"><label>Title<input class="dashboard-input" name="title" required></label><label>Area<select class="dashboard-select" name="area"><option>Engineering</option><option>Sales</option><option>Legal</option><option>Finance</option><option>Marketing</option><option>Operations</option><option>Business</option></select></label><label>Status<select class="dashboard-select" name="status"><option>todo</option><option>in-progress</option><option>done</option><option>blocked</option></select></label><label>Priority<select class="dashboard-select" name="priority"><option>high</option><option>medium</option><option>low</option></select></label><label>Due<input class="dashboard-input" type="date" name="due"></label><label class="full">Notes<textarea class="dashboard-textarea" name="notes"></textarea></label><div class="dash-form-actions"><button class="dash-btn" type="submit">Add Task</button></div></form>`; }
+function addTask(e) { e.preventDefault(); const f=new FormData(e.target); dash.tasks.unshift({id:Date.now(), title:f.get('title'), area:f.get('area'), status:f.get('status'), priority:f.get('priority'), due:f.get('due'), notes:f.get('notes')}); storeSet('fp_tasks',dash.tasks); e.target.reset(); renderDashboard(); }
+function renderSales() {
+  return `<form class="dash-form" onsubmit="addLead(event)"><label>Company<input class="dashboard-input" name="company" required></label><label>Contact<input class="dashboard-input" name="name"></label><label>Role<input class="dashboard-input" name="role"></label><label>Stage<select class="dashboard-select" name="category"><option>Prospect</option><option>Contacted</option><option>Pilot Restaurant</option><option>Closed</option><option>Lost</option></select></label><label>Email<input class="dashboard-input" name="email"></label><label>Phone<input class="dashboard-input" name="phone"></label><label class="full">Next Action<input class="dashboard-input" name="nextAction"></label><label class="full">Notes<textarea class="dashboard-textarea" name="notes"></textarea></label><div class="dash-form-actions"><button class="dash-btn" type="submit">Add Lead</button></div></form><div class="dash-list">${dash.contacts.map(c=>`<div class="dash-row"><div><div class="dash-row-title">${esc(c.company||'Unknown company')}</div><div class="dash-row-sub">${esc(c.name||c.contact||'')} ${c.role?'· '+esc(c.role):''}<br>${esc(c.email||'')} ${c.phone?'· '+esc(c.phone):''}<br><strong>Next:</strong> ${esc(c.nextAction||'')}</div></div><div>${pill(c.category||c.stage||'Lead')}<button class="dash-link-btn danger" onclick="deleteItem('contacts','fp_contacts',${c.id})">Delete</button></div></div>`).join('') || '<div class="dash-empty">No leads yet.</div>'}</div>`;
+}
+function addLead(e) { e.preventDefault(); const f=new FormData(e.target); dash.contacts.unshift({id:Date.now(),company:f.get('company'),name:f.get('name'),role:f.get('role'),category:f.get('category'),email:f.get('email'),phone:f.get('phone'),lastContact:new Date().toISOString().slice(0,10),nextAction:f.get('nextAction'),notes:f.get('notes')}); storeSet('fp_contacts',dash.contacts); e.target.reset(); renderDashboard(); }
+function renderContacts() {
+  return `<form class="dash-form" onsubmit="addContact(event)"><label>Name<input class="dashboard-input" name="name" required></label><label>Role<input class="dashboard-input" name="role"></label><label>Company<input class="dashboard-input" name="company"></label><label>Category<input class="dashboard-input" name="category" placeholder="Legal, Investor, Advisor"></label><label>Email<input class="dashboard-input" name="email"></label><label>Phone<input class="dashboard-input" name="phone"></label><label class="full">Next Action<input class="dashboard-input" name="nextAction"></label><label class="full">Notes<textarea class="dashboard-textarea" name="notes"></textarea></label><div class="dash-form-actions"><button class="dash-btn" type="submit">Add Contact</button></div></form><div class="dash-list">${dash.keyContacts.map(c=>`<div class="dash-row"><div><div class="dash-row-title">${esc(c.name||'Unnamed')}</div><div class="dash-row-sub">${esc(c.role||'')} ${c.company?'@ '+esc(c.company):''}<br>${esc(c.email||'')} ${c.phone?'· '+esc(c.phone):''}<br><strong>Next:</strong> ${esc(c.nextAction||'')}</div></div><div>${pill(c.category||'Contact')}<button class="dash-link-btn danger" onclick="deleteItem('keyContacts','fp_key_contacts',${c.id})">Delete</button></div></div>`).join('') || '<div class="dash-empty">No contacts yet.</div>'}</div>`;
+}
+function addContact(e) { e.preventDefault(); const f=new FormData(e.target); dash.keyContacts.unshift({id:Date.now(),name:f.get('name'),role:f.get('role'),company:f.get('company'),category:f.get('category')||'Other',email:f.get('email'),phone:f.get('phone'),lastContact:new Date().toISOString().slice(0,10),nextAction:f.get('nextAction'),notes:f.get('notes')}); storeSet('fp_key_contacts',dash.keyContacts); e.target.reset(); renderDashboard(); }
+function renderCosts() {
+  const total=dash.costs.reduce((s,c)=>s+Number(c.amount||0),0);
+  return `<div class="dash-grid">${metric('Total Costs','$'+total.toLocaleString())}${metric('Entries',dash.costs.length)}</div><form class="dash-form" onsubmit="addCost(event)"><label>Date<input class="dashboard-input" type="date" name="date" value="${new Date().toISOString().slice(0,10)}"></label><label>Category<input class="dashboard-input" name="category" placeholder="Hardware"></label><label>Item<input class="dashboard-input" name="item" required></label><label>Amount<input class="dashboard-input" type="number" step="0.01" name="amount" required></label><label>Vendor<input class="dashboard-input" name="vendor"></label><label>Notes<input class="dashboard-input" name="notes"></label><div class="dash-form-actions"><button class="dash-btn" type="submit">Add Cost</button></div></form><div class="dash-list">${dash.costs.map(c=>`<div class="dash-row"><div><div class="dash-row-title">${esc(c.item)}</div><div class="dash-row-sub">${esc(c.vendor||'')} ${c.notes?'· '+esc(c.notes):''}<br><span class="dash-meta">${esc(c.date)} · ${esc(c.category)}</span></div></div><div><div class="dash-card-value" style="font-size:1.25rem;">$${Number(c.amount||0).toLocaleString()}</div><button class="dash-link-btn danger" onclick="deleteItem('costs','fp_costs',${c.id})">Delete</button></div></div>`).join('') || '<div class="dash-empty">No costs yet.</div>'}</div>`;
+}
+function addCost(e) { e.preventDefault(); const f=new FormData(e.target); dash.costs.unshift({id:Date.now(),date:f.get('date'),category:f.get('category')||'Other',item:f.get('item'),amount:Number(f.get('amount')||0),vendor:f.get('vendor'),notes:f.get('notes')}); storeSet('fp_costs',dash.costs); e.target.reset(); renderDashboard(); }
+function renderNotes() { return `<form class="dash-form" onsubmit="addNote(event)"><label>Title<input class="dashboard-input" name="title" required></label><label>Date<input class="dashboard-input" type="date" name="date" value="${new Date().toISOString().slice(0,10)}"></label><label class="full">Tags<input class="dashboard-input" name="tags" placeholder="sales, pilot"></label><label class="full">Body<textarea class="dashboard-textarea" name="body" required></textarea></label><div class="dash-form-actions"><button class="dash-btn" type="submit">Add Note</button></div></form><div class="dash-list">${dash.notes.map(n=>`<div class="dash-row"><div><div class="dash-row-title">${n.pinned?'📌 ':''}${esc(n.title)}</div><div class="dash-row-sub" style="white-space:pre-wrap;">${esc(n.body)}</div><div class="dash-meta">${esc(n.date)} · ${(n.tags||[]).map(esc).join(', ')}</div></div><button class="dash-link-btn danger" onclick="deleteItem('notes','fp_notes',${n.id})">Delete</button></div>`).join('') || '<div class="dash-empty">No notes yet.</div>'}</div>`; }
+function addNote(e) { e.preventDefault(); const f=new FormData(e.target); dash.notes.unshift({id:Date.now(),title:f.get('title'),date:f.get('date'),tags:String(f.get('tags')||'').split(',').map(s=>s.trim()).filter(Boolean),pinned:false,body:f.get('body')}); storeSet('fp_notes',dash.notes); e.target.reset(); renderDashboard(); }
+function renderVersions() { return `<div class="dash-list">${dash.versions.map(v=>`<div class="dash-row"><div><div class="dash-row-title">${esc(v.version)} · ${esc(v.name||'FastPay')}</div><div class="dash-row-sub">${esc(v.summary)}<br><span class="dash-meta">${esc(v.date)} · ${esc(v.camera||'')} · ${esc(v.matrix||'')}</span>${Array.isArray(v.changes)?'<ul class="version-changes">'+v.changes.slice(0,6).map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul>':''}</div></div>${pill(v.status||'')}</div>`).join('') || '<div class="dash-empty">No versions yet.</div>'}</div>`; }
+function renderRoadmap() { const ms=dash.milestones.map(m=>`<div class="dash-row"><div><div class="dash-row-title">${esc(m.title)}</div><div class="dash-row-sub">${esc(m.description)}<br><span class="dash-meta">${esc(m.date)} · ${esc(m.category)}</span></div></div>${pill(m.status)}</div>`).join(''); const ds=dash.decisions.map(d=>`<div class="dash-row"><div><div class="dash-row-title">${esc(d.title)}</div><div class="dash-row-sub"><strong>Decision:</strong> ${esc(d.decision)}<br><strong>Rationale:</strong> ${esc(d.rationale)}</div></div><div>${pill(d.outcome)} ${pill(d.impact)}</div></div>`).join(''); return `<div class="dash-card"><div class="dash-card-label">Milestones</div><div class="dash-list">${ms}</div></div><br><div class="dash-card"><div class="dash-card-label">Decision Log</div><div class="dash-list">${ds}</div></div>`; }
+function exportDashboardData() { const blob=new Blob([JSON.stringify(dash,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='fastpay-dashboard-data-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); URL.revokeObjectURL(url); }
+function importDashboardData(event) { const file=event.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{ try { const data=JSON.parse(reader.result); ['versions','contacts','keyContacts','costs','tasks','notes','decisions','milestones'].forEach(k=>{ if(Array.isArray(data[k])) dash[k]=data[k]; }); storeSet('fp_versions',dash.versions); storeSet('fp_contacts',dash.contacts); storeSet('fp_key_contacts',dash.keyContacts); storeSet('fp_costs',dash.costs); storeSet('fp_tasks',dash.tasks); storeSet('fp_notes',dash.notes); storeSet('fp_decisions',dash.decisions); storeSet('fp_milestones',dash.milestones); renderDashboard(); } catch(e) { alert('Could not import JSON.'); } }; reader.readAsText(file); }
+function resetDashboardData() { if(!confirm('Reset dashboard data to seed data? This clears browser-stored edits.')) return; ['fp_versions','fp_contacts','fp_key_contacts','fp_costs','fp_tasks','fp_notes','fp_decisions','fp_milestones'].forEach(k=>localStorage.removeItem(k)); initDashboard(); renderDashboard(); }
+
+
+function applyClientPortalCopy() {
+  const map = {
+    'client-portal-label': CONFIG.CLIENT_PORTAL_LABEL,
+    'client-portal-title': CONFIG.CLIENT_PORTAL_TITLE,
+    'client-portal-subtitle': CONFIG.CLIENT_PORTAL_SUBTITLE,
+    'client-portal-app-label': CONFIG.CLIENT_PORTAL_APP_LABEL,
+    'client-portal-app-title': CONFIG.CLIENT_PORTAL_APP_TITLE,
+    'client-portal-app-sub': CONFIG.CLIENT_PORTAL_APP_SUB
+  };
+  Object.entries(map).forEach(([id, val]) => { const el = $(id); if(el && val) el.textContent = val; });
+  document.querySelectorAll('.nav-link').forEach(btn => { if(btn.textContent.trim() === 'Client Login' && CONFIG.CLIENT_PORTAL_NAV) btn.textContent = CONFIG.CLIENT_PORTAL_NAV; });
+}
+
+document.addEventListener('DOMContentLoaded', () => { initSiteLock(); buildSite(); applyClientPortalCopy(); initROIInputs(); calcROI(); initObserver(); initDashboard(); if(localStorage.getItem('fp_dash_unlocked')==='1') showDashboardApp(); });
+</script>
+</body>
+</html>
