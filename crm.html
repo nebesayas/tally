@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    @keyframes spin{to{transform:rotate(360deg)}}
+    body{margin:0;background:#F3EDE2;-webkit-font-smoothing:antialiased;}
+    a{color:#3F8F5B;text-decoration:none;}
+    a:hover{color:#2D6B44;}
+  </style>
+</helmet>
+
+<sc-if value="{{ !authed }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F3EDE2;font-family:'Hanken Grotesk',system-ui,sans-serif;">
+    <div style="background:#FBF7EF;border-radius:22px;padding:44px 40px;text-align:center;box-shadow:0 30px 80px rgba(14,15,19,.14);max-width:300px;width:90%;border:1px solid #E3D9C8;">
+      <div style="font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:2rem;color:#211C17;letter-spacing:-.02em;margin-bottom:4px;">Tally</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.68rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:28px;">CRM — enter your PIN</div>
+      <input type="password" inputmode="numeric" maxlength="6" value="{{ pinInput }}" onChange="{{ onPinChange }}" onKeyDown="{{ onPinKey }}" placeholder="- - - -"
+        style="width:100%;box-sizing:border-box;text-align:center;font-size:26px;letter-spacing:10px;padding:12px 16px;border:2px solid {{ pinBorderColor }};border-radius:14px;outline:none;color:#211C17;background:#F3EDE2;font-family:'Space Mono',monospace;"/>
+      <sc-if value="{{ pinErr }}" hint-placeholder-val="{{ false }}">
+        <div style="color:#B85C4F;font-size:12px;margin-top:7px;">Incorrect PIN.</div>
+      </sc-if>
+      <button onClick="{{ onPinSubmit }}" style="margin-top:14px;width:100%;padding:12px;font-size:14px;background:#3F8F5B;color:#FBF7EF;border:none;border-radius:14px;font-weight:700;font-family:'Hanken Grotesk',system-ui;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);" style-hover="background:#2D6B44;transform:translateY(-2px);">Unlock</button>
+      <div style="margin-top:12px;font-family:'Space Mono',monospace;font-size:10px;color:#B7AC9A;">default — 1234</div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ authed }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;background:#F3EDE2;font-family:'Hanken Grotesk',system-ui,sans-serif;color:#211C17;">
+
+  <div style="position:sticky;top:0;z-index:500;background:rgba(33,28,23,.94);backdrop-filter:blur(14px);padding:0 20px;height:58px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 0 #3C342B;">
+    <div style="font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:1.4rem;color:#F3EDE2;letter-spacing:-.02em;display:flex;align-items:center;gap:7px;">
+      <span style="width:8px;height:8px;border-radius:50%;background:#3F8F5B;display:inline-block;"></span>Tally
+    </div>
+    <div style="font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:#B7AC9A;">CRM</div>
+    <div style="margin-left:auto;display:flex;gap:3px;background:rgba(255,255,255,.07);border-radius:14px;padding:3px;">
+      <sc-for list="{{ navTabs }}" as="t" hint-placeholder-count="4">
+        <button onClick="{{ t.onClick }}" style="padding:7px 16px;border:none;border-radius:11px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Hanken Grotesk',system-ui;letter-spacing:-.01em;transition:all .3s cubic-bezier(.4,0,.2,1);background:{{ t.bg }};color:{{ t.fg }};">{{ t.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding-bottom:60px;">
+
+    <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:22px 20px;max-width:860px;margin:0 auto;">
+        <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:14px;">Overview — pipeline at a glance</div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:9px;margin-bottom:18px;">
+          <sc-for list="{{ ov.metrics }}" as="m" hint-placeholder-count="4">
+            <div style="background:#FBF7EF;border-radius:22px;padding:15px 13px;border:1px solid #E3D9C8;">
+              <span style="font-family:'Space Mono',monospace;font-size:20px;font-weight:700;letter-spacing:-.03em;color:{{ m.color }};">{{ m.value }}</span>
+              <div style="font-family:'Hanken Grotesk',system-ui;font-size:11px;font-weight:600;color:#211C17;margin-top:4px;">{{ m.label }}</div>
+              <div style="font-family:'Hanken Grotesk',system-ui;font-size:10px;color:#7C7163;">{{ m.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+          <div style="background:#FBF7EF;border-radius:22px;padding:17px 15px;border:1px solid #E3D9C8;">
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:13px;">Operator pipeline</div>
+            <div style="display:flex;gap:6px;align-items:flex-end;">
+              <sc-for list="{{ ov.opRib }}" as="b" hint-placeholder-count="5">
+                <div style="flex:1;text-align:center;">
+                  <div style="height:{{ b.height }}px;background:{{ b.color }};border-radius:4px;margin-bottom:6px;opacity:{{ b.opacity }};transition:height .4s;"></div>
+                  <span style="font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:#211C17;">{{ b.count }}</span>
+                  <div style="font-family:'Hanken Grotesk',system-ui;font-size:9px;color:#7C7163;margin-top:2px;">{{ b.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background:#FBF7EF;border-radius:22px;padding:17px 15px;border:1px solid #E3D9C8;">
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:13px;">Investor pipeline</div>
+            <div style="display:flex;gap:6px;align-items:flex-end;">
+              <sc-for list="{{ ov.invRib }}" as="b2" hint-placeholder-count="4">
+                <div style="flex:1;text-align:center;">
+                  <div style="height:{{ b2.height }}px;background:{{ b2.color }};border-radius:4px;margin-bottom:6px;opacity:{{ b2.opacity }};transition:height .4s;"></div>
+                  <span style="font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:#211C17;">{{ b2.count }}</span>
+                  <div style="font-family:'Hanken Grotesk',system-ui;font-size:9px;color:#7C7163;margin-top:2px;">{{ b2.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ ov.showYC }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FBF3E2;border:1px solid #E0A53C;border-radius:22px;padding:13px 17px;margin-bottom:9px;display:flex;gap:11px;align-items:flex-start;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#B85C4F;margin-top:5px;flex-shrink:0;"></div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#211C17;font-family:'Hanken Grotesk',system-ui;">YC Fall 2026 — {{ ov.ycDays }} days left.</div>
+              <div style="font-size:11px;color:#7C7163;margin-top:2px;font-family:'Hanken Grotesk',system-ui;">Submit by July 27, 2026. Converting Naya before deadline strengthens the application.</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ ov.showPending }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FBF3E2;border:1px solid #E0A53C;border-radius:22px;padding:13px 17px;margin-bottom:9px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#A0721A;margin-bottom:10px;">Pending review — {{ ov.pendingCountLabel }}</div>
+            <sc-for list="{{ ov.pendingOps }}" as="p" hint-placeholder-count="1">
+              <div style="display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #E3D9C8;">
+                <div style="flex:1;min-width:0;">
+                  <span style="font-weight:700;font-size:12px;color:#211C17;font-family:'Hanken Grotesk',system-ui;">{{ p.chain }}</span>
+                  <span style="font-size:11px;color:#7C7163;font-family:'Hanken Grotesk',system-ui;margin-left:6px;">{{ p.contact }}</span>
+                </div>
+                <button onClick="{{ p.onApprove }}" style="padding:5px 11px;font-size:11px;background:#3F8F5B;color:#FBF7EF;border:none;border-radius:14px;font-weight:700;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">Approve</button>
+                <button onClick="{{ p.onDismiss }}" style="padding:5px 11px;font-size:11px;background:#FBF7EF;color:#211C17;border:1px solid #E3D9C8;border-radius:14px;font-weight:600;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">Dismiss</button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ ov.showOverdue }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FEF5F4;border:1px solid #B85C4F;border-radius:22px;padding:13px 17px;margin-bottom:9px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#B85C4F;margin-bottom:8px;">Action required now — {{ ov.overdueCountLabel }}</div>
+            <sc-for list="{{ ov.overdueList }}" as="o" hint-placeholder-count="1">
+              <div onClick="{{ o.onClick }}" style="display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid #E3D9C8;cursor:pointer;">
+                <div style="flex:1;">
+                  <span style="font-weight:700;font-size:12px;color:#211C17;font-family:'Hanken Grotesk',system-ui;">{{ o.chain }} — {{ o.contact }}</span>
+                  <span style="margin-left:6px;font-family:'Space Mono',monospace;font-size:8.5px;font-weight:700;background:#F5D0CC;color:#8B1A1A;border-radius:6px;padding:2px 6px;">{{ o.badgeText }}</span>
+                </div>
+                <div style="font-size:11px;color:#B85C4F;font-family:'Hanken Grotesk',system-ui;max-width:260px;">{{ o.nextAction }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ ov.showDueSoon }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#FEFBF3;border:1px solid #E0A53C;border-radius:22px;padding:13px 17px;margin-bottom:9px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#A0721A;margin-bottom:8px;">Due within 3 days</div>
+            <sc-for list="{{ ov.dueSoonList }}" as="d" hint-placeholder-count="1">
+              <div onClick="{{ d.onClick }}" style="display:flex;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid #E3D9C8;cursor:pointer;">
+                <span style="font-weight:700;font-size:12px;color:#211C17;font-family:'Hanken Grotesk',system-ui;flex:1;">{{ d.chain }} — {{ d.contact }}</span>
+                <span style="font-family:'Space Mono',monospace;font-size:8.5px;font-weight:700;background:#FBF3E2;color:#A0721A;border-radius:6px;padding:2px 6px;">{{ d.badgeText }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:9px;">Full priority queue</div>
+        <sc-if value="{{ ov.queueEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="color:#7C7163;font-size:12px;font-family:'Hanken Grotesk',system-ui;padding:8px 0;">All caught up.</div>
+        </sc-if>
+        <sc-for list="{{ ov.queueList }}" as="q" hint-placeholder-count="4">
+          <div onClick="{{ q.onClick }}" style="display:flex;justify-content:space-between;gap:10px;background:#FBF7EF;border:1px solid #E3D9C8;border-radius:22px;padding:13px 17px;cursor:pointer;margin-bottom:7px;transition:all .3s cubic-bezier(.4,0,.2,1);">
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:2px;">
+                <span style="font-weight:700;font-size:13px;color:#211C17;font-family:'Hanken Grotesk',system-ui;">{{ q.chain }}</span>
+                <span style="display:inline-block;padding:2px 8px;border-radius:30px;font-size:9.5px;font-family:'Space Mono',monospace;background:{{ q.statusBg }};color:{{ q.statusFg }};white-space:nowrap;">{{ q.statusLabel }}</span>
+              </div>
+              <div style="font-size:11px;color:#7C7163;font-family:'Hanken Grotesk',system-ui;margin-bottom:3px;">{{ q.contact }} — {{ q.locText }}</div>
+              <div style="font-family:'Space Mono',monospace;font-size:9px;color:#7C7163;">{{ q.stepText }}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:#E0A53C;">{{ q.benefitText }}</span>
+            </div>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ ov.showRecent }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:18px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:9px;">Recent activity</div>
+            <div style="background:#FBF7EF;border-radius:22px;padding:17px 15px;border:1px solid #E3D9C8;">
+              <sc-for list="{{ ov.recentList }}" as="r" hint-placeholder-count="5">
+                <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #E3D9C8;">
+                  <span style="font-family:'Space Mono',monospace;font-size:9px;color:#7C7163;">{{ r.date }}</span>
+                  <div style="flex:1;">
+                    <span style="font-family:'Space Mono',monospace;font-size:9.5px;color:#3F8F5B;margin-right:6px;">{{ r.type }}</span>
+                    <span style="font-family:'Hanken Grotesk',system-ui;font-weight:600;font-size:11px;color:#211C17;">{{ r.chain }}</span>
+                    <span style="font-family:'Hanken Grotesk',system-ui;font-size:11px;color:#7C7163;"> — {{ r.note }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isOperators }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px 20px;max-width:940px;margin:0 auto;">
+        <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:12px;">Operators — restaurant pipeline</div>
+
+        <div style="position:relative;margin-bottom:11px;">
+          <input value="{{ opTab.query }}" onChange="{{ opTab.onQueryChange }}" placeholder="Search operators, contacts, notes..."
+            style="width:100%;box-sizing:border-box;padding:8px 40px 8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/>
+          <sc-if value="{{ opTab.hasQuery }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ opTab.onClearQuery }}" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:#7C7163;">×</button>
+          </sc-if>
+        </div>
+
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;align-items:center;">
+          <div style="display:flex;gap:3px;background:#E3D9C8;border-radius:30px;padding:3px;">
+            <sc-for list="{{ opTab.segOptions }}" as="sg" hint-placeholder-count="3">
+              <button onClick="{{ sg.onClick }}" style="padding:4px 11px;border-radius:30px;border:none;cursor:pointer;font-size:12px;font-weight:700;font-family:'Hanken Grotesk',system-ui;background:{{ sg.activeBg }};color:{{ sg.activeFg }};">{{ sg.label }}</button>
+            </sc-for>
+          </div>
+          <div style="width:1px;height:20px;background:#E3D9C8;margin:0 2px;"></div>
+          <sc-for list="{{ opTab.statusOptions }}" as="st" hint-placeholder-count="6">
+            <button onClick="{{ st.onClick }}" style="padding:5px 11px;border-radius:30px;font-size:10.5px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',system-ui;background:{{ st.activeBg }};color:{{ st.activeFg }};border:{{ st.activeBorder }};">{{ st.label }}</button>
+          </sc-for>
+          <button onClick="{{ opTab.onAdd }}" style="margin-left:auto;background:none;border:1.5px solid #3F8F5B;border-radius:30px;color:#3F8F5B;font-family:'Hanken Grotesk',system-ui;font-size:11px;font-weight:700;padding:5px 11px;cursor:pointer;">+ Add</button>
+          <button onClick="{{ opTab.onExport }}" style="background:none;border:none;color:#7C7163;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;padding:4px 8px;text-decoration:underline;text-underline-offset:2px;">Export CSV</button>
+        </div>
+
+        <div style="font-family:'Space Mono',monospace;font-size:9.5px;color:#7C7163;margin-bottom:10px;">{{ opTab.countLabel }}</div>
+        <sc-if value="{{ opTab.isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:40px 0;text-align:center;color:#7C7163;font-size:12px;font-family:'Hanken Grotesk',system-ui;">No operators match your filters.</div>
+        </sc-if>
+
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <sc-for list="{{ opTab.rows }}" as="row" hint-placeholder-count="6">
+            <div>
+              <div onClick="{{ row.onClick }}" style="background:#FBF7EF;border:1px solid {{ row.borderColor }};border-radius:22px;padding:13px 17px;cursor:pointer;display:flex;gap:10px;transition:all .3s cubic-bezier(.4,0,.2,1);">
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:3px;">
+                    <span style="font-weight:700;font-size:13.5px;color:#211C17;font-family:'Hanken Grotesk',system-ui;">{{ row.chain }}</span>
+                    <span style="display:inline-block;padding:2px 8px;border-radius:30px;font-size:9.5px;font-family:'Space Mono',monospace;background:{{ row.statusBg }};color:{{ row.statusFg }};white-space:nowrap;">{{ row.statusLabel }}</span>
+                    <sc-if value="{{ row.showSeg }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-family:'Space Mono',monospace;font-size:8.5px;font-weight:700;letter-spacing:.08em;padding:2px 6px;border-radius:4px;background:{{ row.segBg }};color:{{ row.segFg }};">{{ row.segLabel }}</span>
+                    </sc-if>
+                    <span style="font-size:9px;font-family:'Space Mono',monospace;border:1.5px solid {{ row.tierClr }};color:{{ row.tierClr }};padding:2px 5px;border-radius:6px;letter-spacing:.08em;">{{ row.tierLabel }}</span>
+                    <sc-if value="{{ row.showOverdue }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-family:'Space Mono',monospace;font-size:8.5px;font-weight:700;background:#F5D0CC;color:#8B1A1A;border-radius:6px;padding:2px 6px;">{{ row.overdueText }}</span>
+                    </sc-if>
+                    <sc-if value="{{ row.showDueSoon }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-family:'Space Mono',monospace;font-size:8.5px;font-weight:700;background:#FBF3E2;color:#A0721A;border-radius:6px;padding:2px 6px;">{{ row.dueSoonText }}</span>
+                    </sc-if>
+                  </div>
+                  <div style="font-size:11px;color:#7C7163;font-family:'Hanken Grotesk',system-ui;margin-bottom:4px;">
+                    {{ row.contact }} — {{ row.role }}
+                    <sc-if value="{{ row.verified }}" hint-placeholder-val="{{ false }}"><span style="font-family:'Space Mono',monospace;font-size:8.5px;color:#3F8F5B;margin-left:3px;">verified</span></sc-if>
+                    <span style="margin-left:8px;color:#B7AC9A;">{{ row.cuisine }}</span>
+                    <span style="margin-left:6px;color:#B7AC9A;">{{ row.hqDash }}</span>
+                  </div>
+                  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                    <span style="font-family:'Space Mono',monospace;font-size:9px;color:#7C7163;">{{ row.stepText }}</span>
+                    <span style="font-family:'Space Mono',monospace;font-size:9px;color:{{ row.agoClr }};">{{ row.agoText }}</span>
+                    <span style="font-family:'Space Mono',monospace;font-size:9.5px;color:#7C7163;">{{ row.locText }}</span>
+                  </div>
+                  <div style="font-size:11px;color:#3F8F5B;margin-top:4px;font-weight:600;font-family:'Hanken Grotesk',system-ui;line-height:1.35;">{{ row.nextAction }}</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;margin-left:8px;">
+                  <span style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:#E0A53C;">{{ row.benefitText }}</span>
+                  <div style="font-family:'Space Mono',monospace;font-size:9px;color:#7C7163;margin-top:3px;">{{ row.touchCount }} touches</div>
+                </div>
+              </div>
+
+              <sc-if value="{{ row.isSelected }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#FBF7EF;border:1.5px solid #3F8F5B;border-radius:22px;padding:20px;margin-top:8px;">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px;">
+                    <div>
+                      <div style="font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:1.2rem;color:#211C17;">{{ row.chain }}</div>
+                      <div style="font-size:11px;color:#7C7163;font-family:'Hanken Grotesk',system-ui;">{{ row.detail.contact }} — {{ row.detail.role }} — {{ row.cuisine }}</div>
+                      <div style="font-size:10px;color:#B7AC9A;font-family:'Hanken Grotesk',system-ui;margin-top:1px;">{{ row.hq }}</div>
+                    </div>
+                    <button onClick="{{ row.detail.onClose }}" style="background:none;border:none;cursor:pointer;font-size:20px;color:#7C7163;line-height:1;padding:0 4px;">×</button>
+                  </div>
+
+                  <sc-if value="{{ row.detail.isPending }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:#FBF3E2;border:1px solid #E0A53C;border-radius:14px;padding:13px 15px;margin-bottom:14px;">
+                      <div style="font-size:13px;font-weight:700;color:#A0721A;font-family:'Hanken Grotesk',system-ui;margin-bottom:8px;">Auto-created — review required.</div>
+                      <div style="display:flex;gap:7px;">
+                        <button onClick="{{ row.detail.onApprove }}" style="padding:8px 16px;background:#3F8F5B;color:#FBF7EF;border:none;border-radius:14px;font-size:12px;font-weight:700;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">Approve — add to pipeline</button>
+                        <button onClick="{{ row.detail.onDismiss }}" style="padding:8px 16px;background:#FBF7EF;color:#B85C4F;border:1px solid #B85C4F;border-radius:14px;font-size:12px;font-weight:600;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">Dismiss</button>
+                      </div>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ row.detail.showMetrics }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;">
+                      <sc-for list="{{ row.detail.metrics }}" as="mt" hint-placeholder-count="3">
+                        <div style="flex:1;background:#F3EDE2;border-radius:12px;padding:9px 10px;border:1px solid #E3D9C8;text-align:center;min-width:70px;">
+                          <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:{{ mt.color }};">{{ mt.value }}</span>
+                          <div style="font-size:8px;color:#7C7163;margin-top:2px;font-family:'Hanken Grotesk',system-ui;">{{ mt.label }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ row.detail.isNatl }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:#F3EDE2;border-radius:12px;padding:8px 12px;border:1px solid #E3D9C8;margin-bottom:14px;">
+                      <span style="font-family:'Space Mono',monospace;font-size:11px;color:#2D6B44;">{{ row.detail.perLocLine }}</span>
+                    </div>
+                  </sc-if>
+
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Chain</div>
+                      <input value="{{ row.detail.chain }}" onChange="{{ row.detail.onChainInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/>
+                    </div>
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Contact</div>
+                      <input value="{{ row.detail.contact }}" onChange="{{ row.detail.onContactInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/>
+                    </div>
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Role</div>
+                      <input value="{{ row.detail.role }}" onChange="{{ row.detail.onRoleInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/>
+                    </div>
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Email</div>
+                      <input value="{{ row.detail.email }}" onChange="{{ row.detail.onEmailInput }}" placeholder="email@domain.com" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/>
+                    </div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Status</div>
+                      <select value="{{ row.detail.status }}" onChange="{{ row.detail.onStatusInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">
+                        <sc-for list="{{ row.detail.statusOptions }}" as="so" hint-placeholder-count="8"><option value="{{ so }}">{{ so }}</option></sc-for>
+                      </select>
+                    </div>
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Next action due</div>
+                      <input type="date" value="{{ row.detail.nextDue }}" onChange="{{ row.detail.onNextDueInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/>
+                    </div>
+                  </div>
+                  <div style="margin-bottom:8px;">
+                    <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Next action</div>
+                    <textarea rows="2" value="{{ row.detail.next }}" onChange="{{ row.detail.onNextInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;resize:vertical;"></textarea>
+                  </div>
+                  <div style="margin-bottom:14px;">
+                    <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Notes</div>
+                    <textarea rows="3" value="{{ row.detail.notes }}" onChange="{{ row.detail.onNotesInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;resize:vertical;"></textarea>
+                  </div>
+
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;">
+                    <button onClick="{{ row.detail.onSave }}" style="padding:8px 16px;background:#3F8F5B;color:#FBF7EF;border:none;border-radius:14px;font-size:12px;font-weight:700;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">Save</button>
+                    <sc-if value="{{ row.detail.hasEmail }}" hint-placeholder-val="{{ false }}">
+                      <a href="{{ row.detail.mailto }}" style="padding:8px 16px;background:#FBF7EF;color:#211C17;border:1px solid #E3D9C8;border-radius:14px;font-size:12px;font-weight:600;font-family:'Hanken Grotesk',system-ui;text-decoration:none;display:inline-block;">Email</a>
+                    </sc-if>
+                    <button onClick="{{ row.detail.onToggleLog }}" style="padding:8px 16px;background:#FBF7EF;color:#211C17;border:1px solid #E3D9C8;border-radius:14px;font-size:12px;font-weight:600;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">+ Log touch</button>
+                    <button onClick="{{ row.detail.onAI }}" style="padding:8px 16px;background:#211C17;color:#FBF7EF;border:none;border-radius:14px;font-size:12px;font-weight:600;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">AI rec</button>
+                  </div>
+
+                  <sc-if value="{{ row.detail.showLog }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:#F3EDE2;border-radius:14px;padding:11px;border:1px solid #E3D9C8;margin-bottom:14px;">
+                      <div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;">
+                        <select value="{{ row.detail.logType }}" onChange="{{ row.detail.onLogTypeChange }}" style="width:auto;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">
+                          <sc-for list="{{ row.detail.logTypeOptions }}" as="lt" hint-placeholder-count="6"><option value="{{ lt }}">{{ lt }}</option></sc-for>
+                        </select>
+                        <span style="font-family:'Space Mono',monospace;font-size:10px;color:#7C7163;">{{ row.detail.todayStr }}</span>
+                      </div>
+                      <textarea rows="2" value="{{ row.detail.logNote }}" onChange="{{ row.detail.onLogNoteChange }}" placeholder="What happened or what was sent?" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#FBF7EF;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;resize:vertical;margin-bottom:7px;"></textarea>
+                      <button onClick="{{ row.detail.onSubmitLog }}" style="padding:6px 13px;font-size:11px;background:#3F8F5B;color:#FBF7EF;border:none;border-radius:14px;font-weight:700;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">Log</button>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ row.detail.hasTouches }}" hint-placeholder-val="{{ false }}">
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:7px;">Touch history — {{ row.detail.touchCountLabel }}</div>
+                      <sc-for list="{{ row.detail.touches }}" as="tc" hint-placeholder-count="3">
+                        <div style="display:flex;gap:9px;padding:6px 0;border-bottom:1px solid #E3D9C8;">
+                          <span style="font-family:'Space Mono',monospace;font-size:9px;color:#7C7163;">{{ tc.date }}</span>
+                          <div style="flex:1;">
+                            <span style="font-family:'Space Mono',monospace;font-size:9.5px;color:#3F8F5B;margin-right:5px;">{{ tc.type }}</span>
+                            <span style="font-family:'Hanken Grotesk',system-ui;font-size:11px;color:#211C17;line-height:1.4;">{{ tc.note }}</span>
+                          </div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isInvestors }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px 20px;max-width:940px;margin:0 auto;">
+        <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:12px;">Investors — fundraise pipeline</div>
+        <div style="position:relative;margin-bottom:11px;">
+          <input value="{{ invTab.query }}" onChange="{{ invTab.onQueryChange }}" placeholder="Search funds, contacts, notes..."
+            style="width:100%;box-sizing:border-box;padding:8px 40px 8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/>
+          <sc-if value="{{ invTab.hasQuery }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ invTab.onClearQuery }}" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:#7C7163;">×</button>
+          </sc-if>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;align-items:center;">
+          <sc-for list="{{ invTab.tierOptions }}" as="tt" hint-placeholder-count="6">
+            <button onClick="{{ tt.onClick }}" style="padding:5px 11px;border-radius:30px;font-size:10.5px;font-weight:700;cursor:pointer;font-family:'Hanken Grotesk',system-ui;background:{{ tt.activeBg }};color:{{ tt.activeFg }};border:{{ tt.activeBorder }};">{{ tt.label }}</button>
+          </sc-for>
+          <button onClick="{{ invTab.onAdd }}" style="margin-left:auto;background:none;border:1.5px solid #3F8F5B;border-radius:30px;color:#3F8F5B;font-family:'Hanken Grotesk',system-ui;font-size:11px;font-weight:700;padding:5px 11px;cursor:pointer;">+ Add</button>
+          <button onClick="{{ invTab.onExport }}" style="background:none;border:none;color:#7C7163;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;padding:4px 8px;text-decoration:underline;text-underline-offset:2px;">Export CSV</button>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:9.5px;color:#7C7163;margin-bottom:10px;">{{ invTab.countLabel }}</div>
+        <sc-if value="{{ invTab.isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:40px 0;text-align:center;color:#7C7163;font-size:12px;font-family:'Hanken Grotesk',system-ui;">No investors match your filters.</div>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <sc-for list="{{ invTab.rows }}" as="row" hint-placeholder-count="6">
+            <div>
+              <div onClick="{{ row.onClick }}" style="background:#FBF7EF;border:1px solid {{ row.borderColor }};border-radius:22px;padding:13px 17px;cursor:pointer;display:flex;gap:10px;transition:all .3s cubic-bezier(.4,0,.2,1);">
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:3px;">
+                    <span style="font-weight:700;font-size:13.5px;color:#211C17;font-family:'Hanken Grotesk',system-ui;">{{ row.fund }}</span>
+                    <span style="display:inline-block;padding:2px 8px;border-radius:30px;font-size:9.5px;font-family:'Space Mono',monospace;background:{{ row.statusBg }};color:{{ row.statusFg }};white-space:nowrap;">{{ row.statusLabel }}</span>
+                    <span style="font-size:9px;font-family:'Space Mono',monospace;border:1.5px solid {{ row.tierClr }};color:{{ row.tierClr }};padding:2px 5px;border-radius:6px;letter-spacing:.08em;">{{ row.tierLabel }}</span>
+                  </div>
+                  <div style="font-size:11px;color:#7C7163;font-family:'Hanken Grotesk',system-ui;margin-bottom:3px;">{{ row.contact }} — {{ row.check }}</div>
+                  <div style="font-size:11px;color:#3F8F5B;font-weight:600;font-family:'Hanken Grotesk',system-ui;line-height:1.35;">{{ row.nextAction }}</div>
+                </div>
+                <div style="font-family:'Space Mono',monospace;font-size:9.5px;color:#7C7163;flex-shrink:0;margin-left:8px;">{{ row.touchCount }} touches</div>
+              </div>
+              <sc-if value="{{ row.isSelected }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#FBF7EF;border:1.5px solid #3F8F5B;border-radius:22px;padding:20px;margin-top:8px;">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:15px;">
+                    <div>
+                      <div style="font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:1.2rem;color:#211C17;margin-bottom:2px;">{{ row.fund }}</div>
+                      <div style="font-size:11px;color:#7C7163;font-family:'Hanken Grotesk',system-ui;">{{ row.detail.contact }} — {{ row.detail.role }} — {{ row.check }}</div>
+                    </div>
+                    <button onClick="{{ row.detail.onClose }}" style="background:none;border:none;cursor:pointer;font-size:20px;color:#7C7163;line-height:1;padding:0 4px;">×</button>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Fund</div>
+                      <input value="{{ row.detail.fund }}" onChange="{{ row.detail.onFundInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/>
+                    </div>
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Contact</div>
+                      <input value="{{ row.detail.contact }}" onChange="{{ row.detail.onContactInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/>
+                    </div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Status</div>
+                      <select value="{{ row.detail.status }}" onChange="{{ row.detail.onStatusInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">
+                        <sc-for list="{{ row.detail.statusOptions }}" as="so2" hint-placeholder-count="8"><option value="{{ so2 }}">{{ so2 }}</option></sc-for>
+                      </select>
+                    </div>
+                    <div style="display:flex;align-items:flex-end;gap:8px;padding-bottom:2px;">
+                      <span style="font-size:9px;font-family:'Space Mono',monospace;border:1.5px solid {{ row.tierClr }};color:{{ row.tierClr }};padding:2px 5px;border-radius:6px;">{{ row.tierLabel }}</span>
+                      <span style="font-family:'Space Mono',monospace;font-size:11px;color:#7C7163;">{{ row.check }}</span>
+                    </div>
+                  </div>
+                  <div style="margin-bottom:8px;">
+                    <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Next action</div>
+                    <textarea rows="2" value="{{ row.detail.next }}" onChange="{{ row.detail.onNextInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;resize:vertical;"></textarea>
+                  </div>
+                  <div style="margin-bottom:14px;">
+                    <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Notes</div>
+                    <textarea rows="3" value="{{ row.detail.notes }}" onChange="{{ row.detail.onNotesInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;resize:vertical;"></textarea>
+                  </div>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;">
+                    <button onClick="{{ row.detail.onSave }}" style="padding:8px 16px;background:#3F8F5B;color:#FBF7EF;border:none;border-radius:14px;font-size:12px;font-weight:700;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">Save</button>
+                    <button onClick="{{ row.detail.onToggleLog }}" style="padding:8px 16px;background:#FBF7EF;color:#211C17;border:1px solid #E3D9C8;border-radius:14px;font-size:12px;font-weight:600;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">+ Log touch</button>
+                    <button onClick="{{ row.detail.onAI }}" style="padding:8px 16px;background:#211C17;color:#FBF7EF;border:none;border-radius:14px;font-size:12px;font-weight:600;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">AI rec</button>
+                  </div>
+                  <sc-if value="{{ row.detail.showLog }}" hint-placeholder-val="{{ false }}">
+                    <div style="background:#F3EDE2;border-radius:14px;padding:11px;border:1px solid #E3D9C8;margin-bottom:14px;">
+                      <div style="display:flex;gap:8px;align-items:center;margin-bottom:7px;">
+                        <select value="{{ row.detail.logType }}" onChange="{{ row.detail.onLogTypeChange }}" style="width:auto;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">
+                          <sc-for list="{{ row.detail.logTypeOptions }}" as="lt2" hint-placeholder-count="6"><option value="{{ lt2 }}">{{ lt2 }}</option></sc-for>
+                        </select>
+                        <span style="font-family:'Space Mono',monospace;font-size:10px;color:#7C7163;">{{ row.detail.todayStr }}</span>
+                      </div>
+                      <textarea rows="2" value="{{ row.detail.logNote }}" onChange="{{ row.detail.onLogNoteChange }}" placeholder="What happened?" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#FBF7EF;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;resize:vertical;margin-bottom:7px;"></textarea>
+                      <button onClick="{{ row.detail.onSubmitLog }}" style="padding:6px 13px;font-size:11px;background:#3F8F5B;color:#FBF7EF;border:none;border-radius:14px;font-weight:700;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">Log</button>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ row.detail.hasTouches }}" hint-placeholder-val="{{ false }}">
+                    <div>
+                      <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:7px;">Touch history — {{ row.detail.touchCountLabel }}</div>
+                      <sc-for list="{{ row.detail.touches }}" as="tc2" hint-placeholder-count="3">
+                        <div style="display:flex;gap:9px;padding:6px 0;border-bottom:1px solid #E3D9C8;">
+                          <span style="font-family:'Space Mono',monospace;font-size:9px;color:#7C7163;">{{ tc2.date }}</span>
+                          <div style="flex:1;">
+                            <span style="font-family:'Space Mono',monospace;font-size:9.5px;color:#3F8F5B;margin-right:5px;">{{ tc2.type }}</span>
+                            <span style="font-family:'Hanken Grotesk',system-ui;font-size:11px;color:#211C17;line-height:1.4;">{{ tc2.note }}</span>
+                          </div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCalendar }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:22px 20px;max-width:860px;margin:0 auto;">
+        <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:12px;">Calendar — outreach schedule</div>
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <button onClick="{{ cal.onPrev }}" style="padding:6px 14px;font-size:16px;background:#FBF7EF;color:#211C17;border:1px solid #E3D9C8;border-radius:14px;cursor:pointer;font-family:'Hanken Grotesk',system-ui;">←</button>
+              <div style="font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:1.5rem;color:#211C17;">{{ cal.monthLabel }}</div>
+              <button onClick="{{ cal.onNext }}" style="padding:6px 14px;font-size:16px;background:#FBF7EF;color:#211C17;border:1px solid #E3D9C8;border-radius:14px;cursor:pointer;font-family:'Hanken Grotesk',system-ui;">→</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;">
+              <sc-for list="{{ cal.weekdays }}" as="w" hint-placeholder-count="7">
+                <div style="text-align:center;font-family:'Space Mono',monospace;font-size:9px;color:#7C7163;padding:4px 0;letter-spacing:.1em;">{{ w.label }}</div>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">
+              <sc-for list="{{ cal.cells }}" as="c" hint-placeholder-count="35">
+                <sc-if value="{{ c.empty }}" hint-placeholder-val="{{ false }}"><div></div></sc-if>
+                <sc-if value="{{ c.day }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ c.onClick }}" style="min-height:58px;background:{{ c.bg }};border:1px solid {{ c.border }};border-radius:12px;padding:6px 7px;cursor:{{ c.cursor }};transition:all .2s;opacity:{{ c.opacity }};">
+                    <div style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:{{ c.textColor }};margin-bottom:4px;">{{ c.day }}</div>
+                    <div style="display:flex;flex-direction:column;gap:2px;">
+                      <sc-for list="{{ c.dots }}" as="dot" hint-placeholder-count="3">
+                        <div style="height:3px;border-radius:2px;background:{{ dot.color }};"></div>
+                      </sc-for>
+                      <sc-if value="{{ c.hasMore }}" hint-placeholder-val="{{ false }}">
+                        <div style="font-family:'Space Mono',monospace;font-size:7px;color:{{ c.textColor }};">+{{ c.moreCount }}</div>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-if>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:14px;margin-top:14px;flex-wrap:wrap;">
+              <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;border-radius:50%;background:#3F8F5B;"></div><span style="font-family:'Hanken Grotesk',system-ui;font-size:10px;color:#7C7163;">Touch logged</span></div>
+              <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;border-radius:50%;background:#E0A53C;"></div><span style="font-family:'Hanken Grotesk',system-ui;font-size:10px;color:#7C7163;">Action due</span></div>
+              <div style="display:flex;align-items:center;gap:5px;"><div style="width:10px;height:10px;border-radius:50%;background:#B85C4F;"></div><span style="font-family:'Hanken Grotesk',system-ui;font-size:10px;color:#7C7163;">Overdue / deadline</span></div>
+            </div>
+          </div>
+          <div>
+            <sc-if value="{{ cal.right.isDay }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:10px;">{{ cal.right.label }}</div>
+            </sc-if>
+            <sc-if value="{{ !cal.right.isDay }}" hint-placeholder-val="{{ true }}">
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:10px;">Next 30 days</div>
+            </sc-if>
+            <sc-if value="{{ cal.right.empty }}" hint-placeholder-val="{{ false }}">
+              <div style="color:#7C7163;font-size:12px;font-family:'Hanken Grotesk',system-ui;">Nothing scheduled.</div>
+            </sc-if>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <sc-for list="{{ cal.right.items }}" as="ev" hint-placeholder-count="4">
+                <div onClick="{{ ev.onClick }}" style="background:#FBF7EF;border:1px solid #E3D9C8;border-radius:14px;padding:11px 13px;cursor:pointer;transition:all .2s;">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;">
+                    <span style="font-weight:700;font-size:12px;color:#211C17;font-family:'Hanken Grotesk',system-ui;">{{ ev.chain }}</span>
+                    <span style="font-family:'Space Mono',monospace;font-size:9px;color:{{ ev.rightColor }};flex-shrink:0;margin-left:6px;">{{ ev.rightLabel }}</span>
+                  </div>
+                  <div style="font-size:10px;color:#7C7163;font-family:'Hanken Grotesk',system-ui;margin-bottom:4px;">{{ ev.sub }}</div>
+                  <div style="font-size:10.5px;color:#211C17;font-family:'Hanken Grotesk',system-ui;line-height:1.35;">{{ ev.note }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <sc-if value="{{ aiOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(33,28,23,0.72);z-index:1000;display:flex;align-items:flex-end;justify-content:center;font-family:'Hanken Grotesk',system-ui,sans-serif;">
+      <div style="background:#FBF7EF;border-radius:22px 22px 0 0;padding:22px 22px 52px;max-width:640px;width:100%;max-height:86vh;overflow-y:auto;border:1px solid #E3D9C8;border-bottom:none;box-shadow:0 -30px 80px rgba(14,15,19,.22);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:17px;">
+          <div>
+            <div style="font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:1.3rem;color:#211C17;">AI rec</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;">{{ ai.targetLabel }}</div>
+          </div>
+          <button onClick="{{ ai.onClose }}" style="background:none;border:none;font-size:22px;cursor:pointer;color:#7C7163;line-height:1;padding:0 4px;">×</button>
+        </div>
+        <sc-if value="{{ ai.loading }}" hint-placeholder-val="{{ true }}">
+          <div style="text-align:center;padding:48px 0;color:#7C7163;">
+            <div style="font-size:26px;margin-bottom:10px;display:inline-block;animation:spin 0.9s linear infinite;font-family:'Space Mono',monospace;">+</div>
+            <div style="font-size:13px;">Analyzing pipeline context.</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ ai.hasResult }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="display:inline-flex;gap:8px;align-items:center;background:#F3EDE2;border-radius:14px;padding:5px 12px;margin-bottom:14px;border:1px solid #E3D9C8;">
+              <span style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;">Urgency</span>
+              <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:{{ ai.urgColor }};">{{ ai.urgency }}</span>
+            </div>
+            <div style="background:#F3EDE2;border-radius:14px;padding:12px 15px;margin-bottom:11px;border:1px solid #E3D9C8;">
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:5px;">Next action</div>
+              <div style="font-size:13.5px;font-weight:700;color:#211C17;line-height:1.45;">{{ ai.nextAction }}</div>
+            </div>
+            <sc-if value="{{ ai.hasReasoning }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12.5px;color:#7C7163;line-height:1.65;margin-bottom:14px;">{{ ai.reasoning }}</div>
+            </sc-if>
+            <sc-if value="{{ ai.hasDraft }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#F3EDE2;border-radius:14px;padding:13px 15px;border:1px solid #E3D9C8;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;">
+                  <span style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;">Draft {{ ai.draftType }}</span>
+                  <button onClick="{{ ai.onCopy }}" style="padding:4px 10px;font-size:11px;background:#3F8F5B;color:#FBF7EF;border:none;border-radius:14px;font-weight:700;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">{{ ai.copyLabel }}</button>
+                </div>
+                <sc-if value="{{ ai.hasSubject }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;color:#211C17;margin-bottom:7px;">Subject: {{ ai.subject }}</div>
+                </sc-if>
+                <div style="font-size:12px;color:#211C17;white-space:pre-wrap;font-family:'Hanken Grotesk',system-ui;margin:0;line-height:1.7;">{{ ai.draft }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ addOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(33,28,23,0.65);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;font-family:'Hanken Grotesk',system-ui,sans-serif;">
+      <div style="background:#FBF7EF;border-radius:22px;padding:26px;max-width:540px;width:100%;max-height:88vh;overflow-y:auto;border:1px solid #E3D9C8;box-shadow:0 30px 80px rgba(14,15,19,.26);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <div style="font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:1.3rem;color:#211C17;">{{ add.title }}</div>
+          <button onClick="{{ add.onClose }}" style="background:none;border:none;font-size:22px;cursor:pointer;color:#7C7163;line-height:1;padding:0 4px;">×</button>
+        </div>
+
+        <sc-if value="{{ add.isAddOp }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Chain</div><input value="{{ add.chain }}" onChange="{{ add.onChainInput }}" placeholder="Naya" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Segment</div>
+              <select value="{{ add.segment }}" onChange="{{ add.onSegmentInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">
+                <option value="Local">Local</option><option value="National">National</option>
+              </select>
+            </div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Contact</div><input value="{{ add.contact }}" onChange="{{ add.onContactInput }}" placeholder="Full name" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Role</div><input value="{{ add.role }}" onChange="{{ add.onRoleInput }}" placeholder="CEO" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Email</div><input value="{{ add.email }}" onChange="{{ add.onEmailInput }}" placeholder="email@domain.com" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Cuisine / concept</div><input value="{{ add.cuisine }}" onChange="{{ add.onCuisineInput }}" placeholder="Mediterranean bowl" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Total locations</div><input type="number" min="0" value="{{ add.loc }}" onChange="{{ add.onLocInput }}" placeholder="0" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">NYC locations</div><input type="number" min="0" value="{{ add.locNYC }}" onChange="{{ add.onLocNYCInput }}" placeholder="0" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Status</div>
+              <select value="{{ add.status }}" onChange="{{ add.onStatusInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">
+                <sc-for list="{{ add.opStatusOpts }}" as="aso" hint-placeholder-count="8"><option value="{{ aso }}">{{ aso }}</option></sc-for>
+              </select>
+            </div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Tier</div>
+              <select value="{{ add.tier }}" onChange="{{ add.onTierInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">
+                <sc-for list="{{ add.tierOpts }}" as="atn" hint-placeholder-count="5"><option value="{{ atn }}">{{ atn }}</option></sc-for>
+              </select>
+            </div>
+            <div style="grid-column:span 2;"><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">HQ city</div><input value="{{ add.hq }}" onChange="{{ add.onHqInput }}" placeholder="New York, NY" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div style="grid-column:span 2;"><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Next action due</div><input type="date" value="{{ add.nextDue }}" onChange="{{ add.onNextDueInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+          </div>
+          <div style="margin-bottom:9px;"><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Next action</div><textarea rows="2" value="{{ add.next }}" onChange="{{ add.onNextInput }}" placeholder="What needs to happen next?" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;resize:vertical;"></textarea></div>
+          <div style="margin-bottom:20px;"><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Notes</div><textarea rows="2" value="{{ add.notes }}" onChange="{{ add.onNotesInput }}" placeholder="Context, background, intel..." style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;resize:vertical;"></textarea></div>
+        </sc-if>
+
+        <sc-if value="{{ !add.isAddOp }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;">
+            <div style="grid-column:span 2;"><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Fund name</div><input value="{{ add.fund }}" onChange="{{ add.onFundInput }}" placeholder="Acme Ventures" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Contact</div><input value="{{ add.contact }}" onChange="{{ add.onContactInput }}" placeholder="Partner name" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Role</div><input value="{{ add.role }}" onChange="{{ add.onRoleInput }}" placeholder="Managing Partner" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Check size</div><input value="{{ add.check }}" onChange="{{ add.onCheckInput }}" placeholder="$500K-$2M" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;"/></div>
+            <div><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Tier</div>
+              <select value="{{ add.tier }}" onChange="{{ add.onTierInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">
+                <sc-for list="{{ add.tierOpts }}" as="atn2" hint-placeholder-count="5"><option value="{{ atn2 }}">{{ atn2 }}</option></sc-for>
+              </select>
+            </div>
+            <div style="grid-column:span 2;"><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Status</div>
+              <select value="{{ add.status }}" onChange="{{ add.onStatusInput }}" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">
+                <sc-for list="{{ add.invStatusOpts }}" as="iso" hint-placeholder-count="8"><option value="{{ iso }}">{{ iso }}</option></sc-for>
+              </select>
+            </div>
+          </div>
+          <div style="margin-bottom:9px;"><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Next action</div><textarea rows="2" value="{{ add.next }}" onChange="{{ add.onNextInput }}" placeholder="What needs to happen next?" style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;resize:vertical;"></textarea></div>
+          <div style="margin-bottom:20px;"><div style="font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#7C7163;margin-bottom:3px;">Notes</div><textarea rows="2" value="{{ add.notes }}" onChange="{{ add.onNotesInput }}" placeholder="Context, thesis fit, warm intro path..." style="width:100%;box-sizing:border-box;padding:8px 11px;border:1px solid #E3D9C8;border-radius:14px;font-size:12.5px;background:#F3EDE2;color:#211C17;font-family:'Hanken Grotesk',system-ui;outline:none;resize:vertical;"></textarea></div>
+        </sc-if>
+
+        <div style="display:flex;gap:8px;">
+          <button onClick="{{ add.onSubmit }}" style="padding:8px 16px;background:#3F8F5B;color:#FBF7EF;border:none;border-radius:14px;font-size:12px;font-weight:700;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">{{ add.submitLabel }}</button>
+          <button onClick="{{ add.onClose }}" style="padding:8px 16px;background:#FBF7EF;color:#211C17;border:1px solid #E3D9C8;border-radius:14px;font-size:12px;font-weight:600;font-family:'Hanken Grotesk',system-ui;cursor:pointer;">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const B=83304, M=598;
+const STATUS_COLORS={
+  'Not Started':['#EEE8DE','#7C7163'],'Scheduled':['#E8EEF5','#3A5270'],'LinkedIn Sent':['#E3EDF5','#2F4F6B'],
+  'T1 Sent':['#E8F5ED','#2D6B44'],'T2 Sent':['#D5EBE0','#1E5533'],'T3 Sent':['#BDDECE','#134427'],
+  'Replied':['#C8EDD8','#155724'],'Meeting':['#A8DFC8','#0B4A30'],'In Pilot':['#3F8F5B','#F3EDE2'],
+  'Signed':['#2D6B44','#F3EDE2'],'Stalled':['#F5D0CC','#8B2020'],'Pending Review':['#FBF3E2','#A0721A'],
+  'Applying':['#EEE8DE','#7C7163'],'Applied':['#E3EDF5','#2F4F6B'],'Responded':['#D5EBE0','#1E5533'],
+  'In Contact':['#E8F5ED','#2D6B44'],'R1 Complete':['#3F8F5B','#F3EDE2'],'Passed':['#F5D0CC','#8B2020'],
+  'Term Sheet':['#2D6B44','#F3EDE2'],
+};
+const OSTS=['Not Started','Scheduled','LinkedIn Sent','T1 Sent','T2 Sent','T3 Sent','Replied','Meeting','In Pilot','Stalled','Signed','Pending Review'];
+const ISTS=['Not Started','Applying','Applied','Emailed','Responded','In Contact','R1 Complete','Passed','Term Sheet'];
+const SEQ_STEP={'T1 Sent':1,'T2 Sent':2,'T3 Sent':3,'Replied':3,'Meeting':3,'In Pilot':3,'Signed':3,'LinkedIn Sent':1};
+
+const OPS0=[
+  {id:'op1',segment:'Local',chain:'Naya',cuisine:'Lebanese bowl',hq:'New York, NY',
+   contact:'Hady Kfoury',role:'Founder/Owner',email:'',emailConf:false,loc:5,locNYC:5,
+   benefit:B*5,mCost:M*5,status:'In Pilot',tier:1,nextDue:'2026-07-15',
+   notes:'PRIMARY PILOT — live at Naya Wall Street. Paid conversion proposal sent Jul 1. $2,990/mo ask. Hady is sole decision maker. Convert before YC app (Jul 27). TriSpan/Pacific General Equity are Naya investors — warm intro path if Hady stalls.',
+   next:'Call Hady directly — proposal is 15+ days old with no reply. Do not send T3 email. Call.',
+   touches:[
+     {id:'t0',type:'Walk-in',date:'2025-01-15',note:'Cold walk-in at Naya Wall Street. Secured complimentary pilot. Hady agreed on the spot.'},
+     {id:'t1',type:'Email',date:'2026-07-01',note:'Paid conversion proposal sent. $2,990/mo SaaS + $199 hardware lease. 30-day payment terms.'}
+   ]},
+  {id:'op2',segment:'Local',chain:'INDAY',cuisine:'Indian bowl',hq:'New York, NY',
+   contact:'Basu Ratnam',role:'Founder/CEO',email:'basu@indaynyc.com',emailConf:true,loc:9,locNYC:9,
+   benefit:B*9,mCost:M*9,status:'T1 Sent',tier:1,nextDue:'2026-07-18',
+   notes:'PE/finance background (Sycamore Partners) -> founder. Most ROI-literate operator on the list. 9 NYC locations in growth mode. T1 anchored on $814,320 cashier cost. Kitchen Fund (Daniel Rowe) backs INDAY — if Basu goes cold, warm intro from Rowe.',
+   next:'T2 due TOMORROW (Jul 18). Finance-first, 35 words max. Subject: "10 days — INDAY follow-up."',
+   touches:[{id:'t1',type:'Email',date:'2026-07-07',note:'T1 sent to basu@indaynyc.com. Anchored on $814K annual cashier cost across 9 NYC locations.'}]},
+  {id:'op3',segment:'Local',chain:'Dig Inn',cuisine:'Farm bowl',hq:'New York, NY',
+   contact:'Scott Nicholson',role:'COO',email:'snicholson@diginn.com',emailConf:true,loc:36,locNYC:24,
+   benefit:B*36,mCost:M*36,status:'T1 Sent',tier:1,nextDue:'2026-07-13',
+   notes:'18 months into COO role (Jan 2024). Innovation mandate is public and explicit. Kitchen Fund (Daniel Rowe) AND Enlightened Hospitality (Erin Moran) are investors — two warm intro paths if Scott goes cold. Backup contact: Tracy Kim (CEO).',
+   next:'T2 OVERDUE 3 DAYS. Send immediately. "New COO, own the technology decision" angle. Brief.',
+   touches:[{id:'t1',type:'Email',date:'2026-07-02',note:'T1 sent to snicholson@diginn.com. COO innovation mandate angle. $2.99M net benefit.'}]},
+  {id:'op4',segment:'Local',chain:'Dig Inn',cuisine:'Farm bowl',hq:'New York, NY',
+   contact:'Tracy Kim',role:'CEO',email:'tkim@diginn.com',emailConf:true,loc:36,locNYC:24,
+   benefit:B*36,mCost:M*36,status:'Not Started',tier:2,nextDue:'2026-08-04',
+   notes:'CEO of Dig Inn. Backup to Scott Nicholson. Hold unless Scott goes dark after T3. Same investors: Kitchen Fund + Enlightened Hospitality.',
+   next:'Hold. Escalate to Tracy only if Scott Nicholson T3 sent with no response.',
+   touches:[]},
+  {id:'op5',segment:'Local',chain:'Just Salad',cuisine:'Salad assembly',hq:'New York, NY',
+   contact:'Matt Silverman',role:'CTO',email:'msilverman@justsalad.com',emailConf:true,loc:80,locNYC:35,
+   benefit:B*80,mCost:M*80,status:'T1 Sent',tier:1,nextDue:'2026-07-13',
+   notes:'CONFIRMED EMAIL via ContactOut. AI/Gemini deployment mandate across 80+ US locations. Frame Tally as the physical AI layer to their communications layer. Stack angle works: FLIR + YOLOv8. Backup contact: Nick Kenner (Founder & CEO, nkenner@justsalad.com).',
+   next:'T2 OVERDUE 3 DAYS. Send immediately. "Physical layer for your Gemini deployment" subject line.',
+   touches:[{id:'t1',type:'Email',date:'2026-07-02',note:'T1 sent to msilverman@justsalad.com (confirmed). Tech stack angle: FLIR + YOLOv8 + Kalman tracker.'}]},
+  {id:'op6',segment:'Local',chain:'Founders Table RG',cuisine:'Multi-brand portfolio',hq:'New York, NY',
+   contact:'Nick Marsh',role:'CEO',email:'nmarsh@founders-table.com',emailConf:false,loc:124,locNYC:60,
+   benefit:B*124,mCost:M*124,status:'T1 Sent',tier:1,nextDue:'2026-07-27',
+   notes:'Founders Table owns 5 NYC brands: Fieldtrip, Dos Toros, Num Pang, Two Hands, Bravo Pizza. 124 total / 60 NYC locations. L Catterton-backed. One Tally pilot scales across all 5 concepts simultaneously. Leo Kremer (Co-Founder, Dos Toros) is backup contact.',
+   next:'T1 sent Jul 15. T2 due Jul 27. Frame: one decision, 124 locations, 5 brands.',
+   touches:[{id:'t1',type:'Email',date:'2026-07-15',note:'T1 sent. Portfolio framing: one pilot scales across 5 brands / 60 NYC locations instantly.'}]},
+  {id:'op7',segment:'Local',chain:'Founders Table RG',cuisine:'Burrito bowl',hq:'New York, NY',
+   contact:'Leo Kremer',role:'Co-Founder / Dos Toros',email:'lkremer@founders-table.com',emailConf:false,loc:124,locNYC:60,
+   benefit:B*124,mCost:M*124,status:'LinkedIn Sent',tier:2,nextDue:'2026-07-22',
+   notes:'Co-Founder of Dos Toros (now Founders Table portfolio). LinkedIn DM is primary channel. Same portfolio as Nick Marsh. Reference Nick Marsh outreach in DM.',
+   next:'Send LinkedIn DM Jul 22. "Your CEO and I are in touch — wanted to connect directly."',
+   touches:[{id:'l1',type:'LinkedIn',date:'2026-07-01',note:'Connection request sent to Leo Kremer.'}]},
+  {id:'op8',segment:'Local',chain:'Num Pang Kitchen',cuisine:'Sandwich + bowl',hq:'New York, NY',
+   contact:'Ratha Chaupoly',role:'Co-Founder',email:'ratha@numpangnyc.com',emailConf:false,loc:5,locNYC:5,
+   benefit:B*5,mCost:M*5,status:'Not Started',tier:2,nextDue:'2026-07-20',
+   notes:'Co-Founder. 5 NYC locations. Walk-in is primary channel — Chelsea Market. Small operator, strong assembly-line format. Backup: Ben Daitz (ben@numpangnyc.com). Also part of Founders Table portfolio — mention Nick Marsh intro.',
+   next:'Walk-in Chelsea Market 11am-1pm. Ask for Ratha by name. Bring one-pager. Short pitch only.',
+   touches:[]},
+  {id:'op9',segment:'Local',chain:'Bibibop',cuisine:'Korean bowl',hq:'Columbus, OH',
+   contact:'Nathanael Mehrens',role:'President',email:'nmehrens@bibibop.com',emailConf:false,loc:74,locNYC:3,
+   benefit:B*74,mCost:M*74,status:'Not Started',tier:2,nextDue:'2026-07-17',
+   notes:'President, Bibibop. 74 US locations (3 NYC). Walk-in Midtown NYC to get regional ops contact, then email HQ. Korean bowl format = textbook Tally assembly-line fit.',
+   next:'Walk-in Midtown Bibibop today. Get NYC manager name, then email Nathanael at HQ.',
+   touches:[]},
+  {id:'op10',segment:'Local',chain:'Junzi Kitchen',cuisine:'Noodle bowl',hq:'New York, NY',
+   contact:'Yong Zhao',role:'Co-Founder & CEO',email:'yzhao@junzi.com',emailConf:false,loc:6,locNYC:6,
+   benefit:B*6,mCost:M*6,status:'LinkedIn Sent',tier:3,nextDue:'2026-07-16',
+   notes:'Co-Founder & CEO. 6 active NYC locations (3 earlier closures). LinkedIn DM sent Jul 8. Noodle bowl format has strong assembly-line characteristics.',
+   next:'Send LinkedIn DM today if connection accepted.',
+   touches:[{id:'l1',type:'LinkedIn',date:'2026-07-08',note:'LinkedIn DM sent. Data + modernization angle.'}]},
+  {id:'op11',segment:'Local',chain:'Pokéworks',cuisine:'Poke bowl',hq:'San Francisco, CA',
+   contact:'Chris Birkinshaw',role:'Co-Founder & CEO',email:'chris@pokeworks.com',emailConf:false,loc:100,locNYC:7,
+   benefit:B*100,mCost:M*100,status:'Not Started',tier:2,nextDue:'2026-07-21',
+   notes:'Co-Founder & CEO. 100+ US locations (7 NYC). Walk-in NYC Jul 21 per outreach plan. Alternative: warm intro via Scott Nicholson (Dig Inn COO, former Pokéworks board member).',
+   next:'Walk-in NYC Pokéworks Jul 21. Poke bowl assembly line = textbook Tally. Warm intro from Scott possible.',
+   touches:[]},
+  {id:'op12',segment:'Local',chain:'Craveworthy / Taim',cuisine:'Falafel bowl',hq:'Chicago, IL',
+   contact:'Gregg Majewski',role:'CEO',email:'gmajewski@craveworthybrands.com',emailConf:false,loc:35,locNYC:10,
+   benefit:B*35,mCost:M*35,status:'LinkedIn Sent',tier:3,nextDue:'2026-07-23',
+   notes:'CEO of Craveworthy Brands (parent co of Taim Mediterranean). 35+ locations (10 NYC). LinkedIn DM sent today (Jul 16). Franchise tech stack angle. Falafel/mezze bowl = assembly-line format.',
+   next:'Follow up on LinkedIn DM Jul 23 if no reply.',
+   touches:[{id:'l1',type:'LinkedIn',date:'2026-07-16',note:'LinkedIn DM sent today. Franchise tech stack + NYC pilot angle.'}]},
+  {id:'op13',segment:'National',chain:'CAVA',cuisine:'Mediterranean bowl',hq:'Washington, DC',
+   contact:'Brett Schulman',role:'CEO & Co-Founder',email:'bschulman@cava.com',emailConf:false,loc:459,locNYC:12,
+   benefit:B*459,mCost:M*459,status:'T1 Sent',tier:1,nextDue:'2026-07-25',
+   notes:'HOTTEST national lead. Brett Schulman told McKinsey (Dec 2025) CAVA has already piloted AI-powered camera vision across in-restaurant food-prep areas. He is a confirmed believer. CAVA NYSE:CAVA.',
+   next:'T2 due Jul 25. Pitch: "You already believe in camera AI. Tally extends it from kitchen to service line."',
+   touches:[{id:'t1',type:'Email',date:'2026-07-15',note:'T1 sent. Camera vision extension angle. CAVA already piloted this in kitchen prep areas.'}]},
+  {id:'op14',segment:'National',chain:'CAVA',cuisine:'Mediterranean bowl',hq:'Washington, DC',
+   contact:'Doug Thompson',role:'COO',email:'dthompson@cava.com',emailConf:false,loc:459,locNYC:12,
+   benefit:B*459,mCost:M*459,status:'T1 Sent',tier:1,nextDue:'2026-07-25',
+   notes:'New COO (Mar 2, 2026). Operations angle. Send T2 same day as Brett Schulman. 459 locations = $38M+ chain potential.',
+   next:'T2 due Jul 25 (same day as Brett). Labor savings + service line speed angle for COO.',
+   touches:[{id:'t1',type:'Email',date:'2026-07-15',note:'T1 sent same day as Schulman. Operations + cashier labor angle.'}]},
+  {id:'op15',segment:'National',chain:'Chipotle',cuisine:'Burrito bowl',hq:'Newport Beach, CA',
+   contact:'Arlie Sisson',role:'Chief Digital Officer',email:'asisson@chipotle.com',emailConf:false,loc:4000,locNYC:40,
+   benefit:B*4000,mCost:M*4000,status:'Scheduled',tier:1,nextDue:'2026-07-22',
+   notes:'HOTTEST Chipotle contact. First-ever CDO at Chipotle, appointed May 4, 2026. SaaS founder background. 10 weeks in = single most receptive window at a 4,000-location chain.',
+   next:'Send T1 Jul 22. "10 weeks in, here is the physical AI layer you can own." Founder-to-founder.',
+   touches:[]},
+  {id:'op16',segment:'National',chain:'Chipotle',cuisine:'Burrito bowl',hq:'Newport Beach, CA',
+   contact:'Curt Garner',role:'President & Chief Strategy Officer',email:'cgarner@chipotle.com',emailConf:false,loc:4000,locNYC:40,
+   benefit:B*4000,mCost:M*4000,status:'Scheduled',tier:1,nextDue:'2026-07-22',
+   notes:'President and Chief Strategy Officer, Chipotle. Second Chipotle contact. Strategy and scale angle.',
+   next:'Send T1 Jul 22 alongside Arlie Sisson. Strategy and margin angle.',
+   touches:[]},
+  {id:'op17',segment:'National',chain:'Sweetgreen',cuisine:'Grain bowl',hq:'Los Angeles, CA',
+   contact:'Wouleta Ayele',role:'CTO',email:'wayele@sweetgreen.com',emailConf:false,loc:200,locNYC:20,
+   benefit:B*200,mCost:M*200,status:'Scheduled',tier:1,nextDue:'2026-07-22',
+   notes:'CTO at Sweetgreen. 200+ locations. Tech-forward brand (Infinite Kitchen). Grain bowl = assembly-line format. Technical framing lands with this contact.',
+   next:'Send T1 Jul 22. Tech stack angle: FLIR + YOLOv8. Reference their Infinite Kitchen investment.',
+   touches:[]},
+  {id:'op18',segment:'National',chain:'Sweetgreen',cuisine:'Grain bowl',hq:'Los Angeles, CA',
+   contact:'Jason Cochran',role:'COO',email:'jcochran@sweetgreen.com',emailConf:false,loc:200,locNYC:20,
+   benefit:B*200,mCost:M*200,status:'Scheduled',tier:1,nextDue:'2026-07-22',
+   notes:'COO at Sweetgreen (May 2025). Operations and labor savings angle.',
+   next:'Send T1 Jul 22 alongside Wouleta Ayele. Operations + cashier elimination angle.',
+   touches:[]},
+];
+
+const INVS0=[
+  {id:'inv1',fund:'Techstars Future of Food',contact:'Sarah Bain',role:'Managing Director',tier:1,check:'$220K / 5%',status:'R1 Complete',
+   notes:'R1 interview done. Ross Skadsberg (Ecolab VP) also a contact from Techstars process.',
+   next:'Follow up with Sarah if no R2 invite by Jul 20.',
+   touches:[{id:'t1',type:'Interview',date:'2026-06-01',note:'Round 1 interview completed.'}]},
+  {id:'inv2',fund:'Y Combinator',contact:'YC Admissions',role:'Partners',tier:1,check:'$500K / 7%',status:'Applying',
+   notes:'DEADLINE: July 27, 2026. Fall 2026 cohort. Highest-leverage single action this month.',
+   next:'URGENT: Submit Fall 2026 app by July 27 -- 11 days.',
+   touches:[]},
+  {id:'inv3',fund:'500 Global',contact:'Program Team',role:'Partners',tier:1,check:'Standard',status:'Applied',
+   notes:'Full commitment to Palo Alto relocation confirmed. One Q on prior companies pending.',
+   next:'Confirm final Q submitted. Await decision.',
+   touches:[{id:'t1',type:'Application',date:'2026-06-10',note:'Application submitted. Committed to relocate to Palo Alto.'}]},
+  {id:'inv4',fund:'Kitchen Fund',contact:'Daniel Rowe',role:'Managing Partner',tier:1,check:'Strategic / $500K+',status:'Not Started',
+   notes:'HIGHEST-LEVERAGE SINGLE CONTACT. Backs both Dig Inn (Scott Nicholson) AND INDAY (Basu Ratnam) simultaneously. Previously backed Agot AI (exited April 2025). Send BEFORE Basu T2.',
+   next:'Send warm intro request TODAY before T2 to Basu. Reference Agot AI exit + portfolio overlap.',
+   touches:[]},
+  {id:'inv5',fund:'Enlightened Hospitality Investments',contact:'Erin Moran',role:'Managing Partner',tier:2,check:'$375M fund',status:'Not Started',
+   notes:'$375M fund. Backs Dig Inn directly. Danny Meyer affiliation. Warm intro to Dig Inn leadership if Scott Nicholson stalls.',
+   next:'Send cold email referencing Dig Inn investment + restaurant CV fit. Jul 22.',
+   touches:[]},
+  {id:'inv6',fund:'Branded Hospitality Ventures',contact:'TBD',role:'Partner',tier:2,check:'$500K-$1M',status:'Not Started',
+   notes:'Restaurant tech specialist. Highest thesis alignment on full list.',
+   next:'Cold email. Lead with Naya pilot + provisional patent.',
+   touches:[]},
+  {id:'inv7',fund:'Susa Ventures',contact:'TBD',role:'Partner',tier:2,check:'$500K-$2M',status:'Not Started',
+   notes:'Pre-seed focus. Restaurant/ops tech thesis.',
+   next:'Identify right partner. Draft outreach.',
+   touches:[]},
+  {id:'inv8',fund:'Gradient Ventures',contact:'TBD',role:'Partner',tier:2,check:'$1M-$5M',status:'Not Started',
+   notes:"Google's AI fund. Physical AI / computer vision thesis.",
+   next:'Warm intro preferred via Google/Goldman network.',
+   touches:[]},
+  {id:'inv9',fund:'Ecolab (Strategic)',contact:'Ross Skadsberg',role:'VP Growth Ventures',tier:2,check:'Strategic',status:'In Contact',
+   notes:'Connected via Techstars. Restaurant service network overlap.',
+   next:'Follow up post-Techstars R2.',
+   touches:[{id:'t1',type:'Email',date:'2026-06-01',note:'Connected via Techstars process.'}]},
+  {id:'inv10',fund:'L Catterton',contact:'TBD',role:'Partner',tier:2,check:'Strategic',status:'Not Started',
+   notes:'PE fund backing Founders Table RG. Board seat at Founders Table. Warm path if Nick Marsh engagement stalls.',
+   next:'Research Founders Table board member at L Catterton. Potential warm intro.',
+   touches:[]},
+  {id:'inv11',fund:'TriSpan / Pacific General Equity',contact:'TBD',role:'Managing Partner',tier:3,check:'Strategic',status:'Not Started',
+   notes:'PE backing Naya (your live pilot). Warm intro path to Hady Kfoury if paid conversion stalls.',
+   next:'Research deal lead for Naya investment. LinkedIn.',
+   touches:[]},
+  {id:'inv12',fund:'Matrix Partners',contact:'TBD',role:'Partner',tier:3,check:'$1M-$5M',status:'Not Started',
+   notes:'SaaS B2B thesis. Good ARR model fit.',
+   next:'Outreach after first paying customer.',
+   touches:[]},
+  {id:'inv13',fund:'Outlander VC',contact:'TBD',role:'Partner',tier:3,check:'$250K-$1M',status:'Not Started',
+   notes:'Underrepresented founders + physical world AI.',
+   next:'Cold pitch via application form.',
+   touches:[]},
+  {id:'inv14',fund:'Lerer Hippeau',contact:'TBD',role:'Partner',tier:3,check:'$500K-$2M',status:'Not Started',
+   notes:'NYC-based. Consumer tech focus.',
+   next:'Email pitch. NYC angle is an asset.',
+   touches:[]},
+  {id:'inv15',fund:'Primary Venture Partners',contact:'TBD',role:'Partner',tier:3,check:'$1M-$3M',status:'Not Started',
+   notes:'NYC seed. Strong SMB/ops focus.',
+   next:'Draft outreach.',
+   touches:[]},
+  {id:'inv16',fund:'BoxGroup',contact:'TBD',role:'Partner',tier:3,check:'$100K-$500K',status:'Not Started',
+   notes:'NYC pre-seed. Known for fast decisions.',
+   next:'Cold email with one-pager.',
+   touches:[]},
+  {id:'inv17',fund:'Chingona Ventures',contact:'TBD',role:'Partner',tier:3,check:'$250K-$1M',status:'Not Started',
+   notes:'Underrepresented founders + tech.',
+   next:'Cold pitch.',
+   touches:[]},
+  {id:'inv18',fund:'NFX',contact:'TBD',role:'Partner',tier:4,check:'$500K-$2M',status:'Not Started',
+   notes:'Network effects thesis. Angle: restaurant data flywheel.',
+   next:'Draft outreach emphasizing data moat.',
+   touches:[]},
+  {id:'inv19',fund:'Notation Capital',contact:'TBD',role:'Partner',tier:4,check:'$100K-$500K',status:'Not Started',
+   notes:'NYC pre-seed.',
+   next:'Draft outreach.',
+   touches:[]},
+  {id:'inv20',fund:'Precursor Ventures',contact:'TBD',role:'Partner',tier:4,check:'$25K-$500K',status:'Not Started',
+   notes:'Pre-seed / solo founder friendly.',
+   next:'Apply via form.',
+   touches:[]},
+  {id:'inv21',fund:'Betaworks',contact:'TBD',role:'Partner',tier:4,check:'$100K-$500K',status:'Not Started',
+   notes:'NYC studio + AI focus.',
+   next:'Research current AI cohort timing.',
+   touches:[]},
+  {id:'inv22',fund:'Boost.vc',contact:'TBD',role:'Partner',tier:5,check:'$500K',status:'Not Started',
+   notes:'Deep tech. Computer vision angle.',
+   next:'Apply via program.',
+   touches:[]},
+];
+
+function daysSince(dateStr){ if(!dateStr) return null; return Math.floor((Date.now()-new Date(dateStr))/86400000); }
+function overdueDays(nextDue,status){
+  if(!nextDue||['Not Started','Scheduled','Stalled','Signed','In Pilot'].includes(status)) return null;
+  const d=Math.floor((Date.now()-new Date(nextDue))/86400000);
+  return d>0?d:null;
+}
+function fmtB(n){ if(!n) return '--'; if(n>=1e9) return '$'+(n/1e9).toFixed(1)+'B/yr'; if(n>=1e6) return '$'+(n/1e6).toFixed(0)+'M/yr'; return '$'+(n/1000).toFixed(0)+'K/yr'; }
+function fmtM(n){ if(!n) return '--'; if(n>=1e6) return '$'+(n/1e6).toFixed(1)+'M/mo'; if(n>=1000) return '$'+(n/1000).toFixed(0)+'K/mo'; return '$'+n+'/mo'; }
+function fmtNum(n){ return (n||0).toLocaleString(); }
+
+class Component extends DCLogic {
+  state = (() => {
+    let saved=null; try{ saved=JSON.parse(localStorage.getItem('tally-crm-v3')); }catch(e){}
+    let pin='1234'; try{ pin=localStorage.getItem('tally-pin')||'1234'; }catch(e){}
+    return {
+      authed:false, pinInput:'', pinErr:false, storedPin:pin,
+      ops:(saved&&saved.ops)||OPS0, invs:(saved&&saved.invs)||INVS0,
+      tab:'overview', opSel:null, invSel:null, editDraft:null,
+      showLog:false, logType:'Email', logNote:'',
+      opSeg:'All', opFilt:'All', opQuery:'',
+      invFilt:'All', invQuery:'',
+      calYr:new Date().getFullYear(), calMo:new Date().getMonth(), calSelDay:null,
+      aiTarget:null, aiKind:null, aiResult:null, aiLoading:false, aiCopied:false,
+      addType:null, addForm:null,
+    };
+  })();
+
+  componentDidUpdate(pp,ps){
+    if(ps.ops!==this.state.ops||ps.invs!==this.state.invs){
+      try{ localStorage.setItem('tally-crm-v3',JSON.stringify({ops:this.state.ops,invs:this.state.invs})); }catch(e){}
+    }
+  }
+
+  setPinInput=(v)=>this.setState({pinInput:v.replace(/\D/g,''),pinErr:false});
+  submitPin=()=>{
+    if(this.state.pinInput===this.state.storedPin) this.setState({authed:true});
+    else{ this.setState({pinErr:true,pinInput:''}); setTimeout(()=>this.setState({pinErr:false}),1400); }
+  };
+
+  setTab=(tab)=>this.setState({tab});
+  navTo=(tab,id)=>{
+    this.setState({tab});
+    if(tab==='operators') this.openOp(id);
+    if(tab==='investors') this.openInv(id);
+  };
+
+  buildOpDraft=(op)=>({chain:op.chain,contact:op.contact,role:op.role,email:op.email||'',status:op.status,nextDue:op.nextDue||'',next:op.next||'',notes:op.notes||''});
+  buildInvDraft=(inv)=>({fund:inv.fund,contact:inv.contact,role:inv.role,status:inv.status,next:inv.next||'',notes:inv.notes||''});
+
+  openOp=(id)=>{
+    if(this.state.opSel===id){ this.setState({opSel:null,editDraft:null,showLog:false}); return; }
+    const op=this.state.ops.find(o=>o.id===id);
+    this.setState({opSel:id,editDraft:op?this.buildOpDraft(op):null,showLog:false,logNote:''});
+  };
+  openInv=(id)=>{
+    if(this.state.invSel===id){ this.setState({invSel:null,editDraft:null,showLog:false}); return; }
+    const inv=this.state.invs.find(i=>i.id===id);
+    this.setState({invSel:id,editDraft:inv?this.buildInvDraft(inv):null,showLog:false,logNote:''});
+  };
+  setDraftField=(field)=>(e)=>{ const v=(e&&e.target)?e.target.value:e; this.setState(s=>({editDraft:{...s.editDraft,[field]:v}})); };
+
+  saveOp=()=>{ const id=this.state.opSel,d=this.state.editDraft; if(!id||!d) return; this.setState(s=>({ops:s.ops.map(o=>o.id===id?{...o,...d}:o)})); };
+  saveInv=()=>{ const id=this.state.invSel,d=this.state.editDraft; if(!id||!d) return; this.setState(s=>({invs:s.invs.map(i=>i.id===id?{...i,...d}:i)})); };
+
+  approveOp=(id)=>this.setState(s=>({ops:s.ops.map(o=>o.id===id?{...o,pending:false,status:o.status==='Pending Review'?'Not Started':o.status}:o)}));
+  dismissOp=(id)=>this.setState(s=>({ops:s.ops.filter(o=>o.id!==id)}));
+
+  toggleLog=()=>this.setState(s=>({showLog:!s.showLog,logNote:''}));
+  setLogType=(v)=>this.setState({logType:v});
+  setLogNote=(v)=>this.setState({logNote:v});
+  submitLogOp=()=>{
+    const id=this.state.opSel,n=this.state.logNote.trim(); if(!id||!n) return;
+    const touch={id:'t'+Date.now(),type:this.state.logType,date:new Date().toISOString().slice(0,10),note:n};
+    this.setState(s=>({ops:s.ops.map(o=>o.id===id?{...o,touches:[...(o.touches||[]),touch]}:o),showLog:false,logNote:''}));
+  };
+  submitLogInv=()=>{
+    const id=this.state.invSel,n=this.state.logNote.trim(); if(!id||!n) return;
+    const touch={id:'t'+Date.now(),type:this.state.logType,date:new Date().toISOString().slice(0,10),note:n};
+    this.setState(s=>({invs:s.invs.map(i=>i.id===id?{...i,touches:[...(i.touches||[]),touch]}:i),showLog:false,logNote:''}));
+  };
+
+  setOpSeg=(v)=>this.setState({opSeg:v});
+  setOpFilt=(v)=>this.setState({opFilt:v});
+  setOpQuery=(v)=>this.setState({opQuery:v});
+  setInvFilt=(v)=>this.setState({invFilt:v});
+  setInvQuery=(v)=>this.setState({invQuery:v});
+
+  filteredOps=()=>{
+    const {ops,opSeg,opFilt,opQuery}=this.state;
+    let list = opFilt==='Pending Review' ? ops.filter(o=>o.pending) : ops.filter(o=>!o.pending);
+    if(opSeg!=='All'&&opFilt!=='Pending Review') list=list.filter(o=>o.segment===opSeg);
+    if(opFilt!=='All'&&opFilt!=='Pending Review') list=list.filter(o=>o.status===opFilt);
+    if(opQuery){ const q=opQuery.toLowerCase(); list=list.filter(o=>[o.chain,o.contact,o.role,o.cuisine,o.notes,o.next].some(f=>f&&f.toLowerCase().includes(q))); }
+    return list;
+  };
+  filteredInvs=()=>{
+    const {invs,invFilt,invQuery}=this.state;
+    let list = invFilt==='All' ? invs : invs.filter(i=>i.tier===Number(invFilt));
+    if(invQuery){ const q=invQuery.toLowerCase(); list=list.filter(i=>[i.fund,i.contact,i.notes,i.next].some(f=>f&&f.toLowerCase().includes(q))); }
+    return list;
+  };
+
+  openAdd=(type)=>{
+    const tab = type==='operator'?'operators':'investors';
+    const form = type==='operator'
+      ? {chain:'',segment:'Local',cuisine:'',hq:'',contact:'',role:'',email:'',loc:'',locNYC:'',status:'Not Started',tier:'2',nextDue:'',next:'',notes:''}
+      : {fund:'',contact:'',role:'',check:'',tier:'2',status:'Not Started',next:'',notes:''};
+    this.setState({tab,addType:type,addForm:form});
+  };
+  closeAdd=()=>this.setState({addType:null,addForm:null});
+  setAddField=(field)=>(e)=>{ const v=(e&&e.target)?e.target.value:e; this.setState(s=>({addForm:{...s.addForm,[field]:v}})); };
+  submitAdd=()=>{
+    const {addType,addForm}=this.state; if(!addType||!addForm) return;
+    if(addType==='operator'){
+      const l=Number(addForm.loc)||0;
+      const id='op'+Date.now();
+      const op={id,segment:addForm.segment,chain:addForm.chain||'New chain',cuisine:addForm.cuisine,hq:addForm.hq,
+        contact:addForm.contact||'Contact',role:addForm.role,email:addForm.email,emailConf:false,
+        loc:l,locNYC:Number(addForm.locNYC)||0,benefit:B*l,mCost:M*l,status:addForm.status,tier:Number(addForm.tier),
+        nextDue:addForm.nextDue,next:addForm.next,notes:addForm.notes,touches:[]};
+      this.setState(s=>({ops:[...s.ops,op],addType:null,addForm:null,opSel:id,editDraft:this.buildOpDraft(op)}));
+    } else {
+      const id='inv'+Date.now();
+      const inv={id,fund:addForm.fund||'New fund',contact:addForm.contact||'TBD',role:addForm.role,
+        tier:Number(addForm.tier),check:addForm.check,status:addForm.status,next:addForm.next,notes:addForm.notes,touches:[]};
+      this.setState(s=>({invs:[...s.invs,inv],addType:null,addForm:null,invSel:id,editDraft:this.buildInvDraft(inv)}));
+    }
+  };
+
+  runAI=async(item,kind)=>{
+    this.setState({aiTarget:item,aiKind:kind,aiResult:null,aiLoading:true,aiCopied:false});
+    const prompt = "You are a sharp, direct sales advisor for Tally -- an AI computer vision system automating cashier-free billing at fast-casual assembly-line restaurants.\n\nCore facts:\n- System: dual overhead cameras, Kalman tracker, YOLOv8 + optical flow, 40-claim provisional patent (Jun 2026)\n- Economics: eliminates $90,480/yr per fully-loaded NYC cashier. $398/mo SaaS + $199/mo hardware = $598/mo per location\n- ROI: 7.7x operator ROI proven. Break-even under 11 days per month per location\n- Traction: live pilot at Naya Wall Street, NYC.\n- Founder: Goldman Sachs Associate (CFA, Series 7/63).\n\nContact ("+kind+"):\n"+JSON.stringify(item,null,2)+"\n\nToday: "+new Date().toISOString().slice(0,10)+"\n\nReturn ONLY valid JSON (no markdown):\n{\"urgency\":\"High|Medium|Low\",\"nextAction\":\"One specific sentence.\",\"reasoning\":\"Two sentences, direct.\",\"draftType\":\"email|linkedin|walkin|call\",\"subject\":\"Subject line if email\",\"draft\":\"Ready-to-send message, under 110 words, second person, no emoji.\"}";
+    try{
+      const text = await window.claude.complete(prompt);
+      const clean = text.replace(/```json|```/g,'').trim();
+      this.setState({aiResult:JSON.parse(clean), aiLoading:false});
+    }catch(e){
+      this.setState({aiResult:{urgency:'Low',nextAction:'AI temporarily unavailable.',reasoning:'Try again shortly.',draft:'',draftType:'note'}, aiLoading:false});
+    }
+  };
+  closeAI=()=>this.setState({aiTarget:null,aiKind:null,aiResult:null,aiLoading:false});
+  copyDraft=()=>{
+    const r=this.state.aiResult; if(!r) return;
+    const text=(r.subject?'Subject: '+r.subject+'\n\n':'')+(r.draft||'');
+    try{ navigator.clipboard.writeText(text); }catch(e){}
+    this.setState({aiCopied:true}); setTimeout(()=>this.setState({aiCopied:false}),2200);
+  };
+
+  calPrev=()=>this.setState(s=>{ let{calYr,calMo}=s; if(calMo===0){calMo=11;calYr--;}else calMo--; return{calYr,calMo,calSelDay:null}; });
+  calNext=()=>this.setState(s=>{ let{calYr,calMo}=s; if(calMo===11){calMo=0;calYr++;}else calMo++; return{calYr,calMo,calSelDay:null}; });
+  selectDay=(d)=>this.setState(s=>({calSelDay:s.calSelDay===d?null:d}));
+
+  exportCSV=(rows,filename)=>{
+    const h=['Chain/Fund','Segment','Cuisine','HQ','Contact','Role','Email','Locations','NYC Locations','Status','Tier','Annual Benefit','Monthly Cost','Next Due','Next Action','Notes','Touches'];
+    const body=rows.map(r=>[r.chain||r.fund,r.segment||'',r.cuisine||'',r.hq||'',r.contact,r.role||'',r.email||'',r.loc||'',r.locNYC||'',r.status,r.tier||'',r.benefit||'',r.mCost||'',r.nextDue||'',r.next||'',r.notes||'',(r.touches||[]).length].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','));
+    const csv=[h.join(','),...body].join('\n');
+    const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download=filename; a.click();
+  };
+
+  buildOpDetailVM=(op)=>{
+    const s=this.state; const d=s.editDraft||this.buildOpDraft(op);
+    const isNatl=op.segment==='National';
+    const metrics=[];
+    if(op.benefit>0){
+      metrics.push({label:isNatl?'Chain benefit/yr':'Net benefit/yr', value:fmtB(op.benefit), color:'#E0A53C'});
+      metrics.push({label:'Monthly cost', value:fmtM(op.mCost), color:'#E0A53C'});
+      metrics.push({label:'Total locations', value:fmtNum(op.loc), color:'#211C17'});
+      if(op.locNYC&&op.locNYC<op.loc) metrics.push({label:'NYC locations', value:fmtNum(op.locNYC), color:'#211C17'});
+    }
+    const touches=[...(op.touches||[])].reverse().map(t=>({id:t.id,date:t.date,type:t.type,note:t.note}));
+    return{
+      chain:d.chain, contact:d.contact, role:d.role, email:d.email, status:d.status, nextDue:d.nextDue, next:d.next, notes:d.notes,
+      isPending:!!op.pending,
+      metrics, showMetrics:metrics.length>0,
+      isNatl, perLocLine: (isNatl&&op.benefit>0) ? ('$'+B.toLocaleString()+'/yr · $598/mo per location') : '',
+      mailto:'mailto:'+(d.email||'')+'?subject=Tally -- '+op.chain+'&body=Hi '+((d.contact||'').split(' ')[0]||'')+',',
+      hasEmail:!!d.email,
+      statusOptions:OSTS,
+      touches, hasTouches:touches.length>0, touchCountLabel:touches.length+' logged',
+      onChainInput:this.setDraftField('chain'), onContactInput:this.setDraftField('contact'), onRoleInput:this.setDraftField('role'),
+      onEmailInput:this.setDraftField('email'), onStatusInput:this.setDraftField('status'), onNextDueInput:this.setDraftField('nextDue'),
+      onNextInput:this.setDraftField('next'), onNotesInput:this.setDraftField('notes'),
+      onSave:this.saveOp, onClose:()=>this.openOp(op.id), onToggleLog:this.toggleLog, onAI:()=>this.runAI(op,'operator'),
+      onApprove:()=>this.approveOp(op.id), onDismiss:()=>this.dismissOp(op.id),
+      showLog:s.showLog, logType:s.logType, logNote:s.logNote, logTypeOptions:['Email','LinkedIn','Walk-in','Call','Meeting','Note'],
+      onLogTypeChange:(e)=>this.setLogType(e.target.value), onLogNoteChange:(e)=>this.setLogNote(e.target.value), onSubmitLog:this.submitLogOp,
+      todayStr:new Date().toISOString().slice(0,10),
+    };
+  };
+
+  buildInvDetailVM=(inv)=>{
+    const s=this.state; const d=s.editDraft||this.buildInvDraft(inv);
+    const touches=[...(inv.touches||[])].reverse().map(t=>({id:t.id,date:t.date,type:t.type,note:t.note}));
+    return{
+      fund:d.fund, contact:d.contact, role:d.role, status:d.status, next:d.next, notes:d.notes,
+      statusOptions:ISTS,
+      touches, hasTouches:touches.length>0, touchCountLabel:touches.length+' logged',
+      onFundInput:this.setDraftField('fund'), onContactInput:this.setDraftField('contact'), onRoleInput:this.setDraftField('role'),
+      onStatusInput:this.setDraftField('status'), onNextInput:this.setDraftField('next'), onNotesInput:this.setDraftField('notes'),
+      onSave:this.saveInv, onClose:()=>this.openInv(inv.id), onToggleLog:this.toggleLog, onAI:()=>this.runAI(inv,'investor'),
+      showLog:s.showLog, logType:s.logType, logNote:s.logNote, logTypeOptions:['Email','Application','Interview','Meeting','Call','Note'],
+      onLogTypeChange:(e)=>this.setLogType(e.target.value), onLogNoteChange:(e)=>this.setLogNote(e.target.value), onSubmitLog:this.submitLogInv,
+      todayStr:new Date().toISOString().slice(0,10),
+    };
+  };
+
+  renderVals(){
+    const s=this.state;
+    const ops=s.ops, invs=s.invs;
+    const today=new Date().toISOString().slice(0,10);
+
+    const statusColor=(status)=>STATUS_COLORS[status]||['#EEE8DE','#7C7163'];
+    const segColor=(seg)=>seg==='National'?['#211C17','#F3EDE2']:['#E3D9C8','#7C7163'];
+    const tierColor=(t)=>['#3F8F5B','#7A6200','#2F4F6B','#7C7163','#888888'][t-1]||'#7C7163';
+
+    const opRowVM=(op)=>{
+      const [sbg,sfg]=statusColor(op.status);
+      const [gbg,gfg]=segColor(op.segment);
+      const od=overdueDays(op.nextDue,op.status);
+      const dueDays=(op.nextDue&&!od)?Math.ceil((new Date(op.nextDue)-Date.now())/86400000):null;
+      const showDueSoon = dueDays!==null && dueDays>=0 && dueDays<=3;
+      const step=SEQ_STEP[op.status]||0;
+      const lastTouch=(op.touches&&op.touches.length)?op.touches[op.touches.length-1].date:null;
+      const ago=daysSince(lastTouch);
+      return{
+        id:op.id, chain:op.chain, statusLabel:op.status, statusBg:sbg, statusFg:sfg,
+        showSeg:!!op.segment, segLabel:op.segment?op.segment.toUpperCase():'', segBg:gbg, segFg:gfg,
+        tierLabel:'T'+op.tier, tierClr:tierColor(op.tier),
+        contact:op.contact, role:op.role, verified:!!op.emailConf, cuisine:op.cuisine||'', hq:op.hq||'',
+        hqDash: op.hq?('— '+op.hq):'',
+        locText: fmtNum(op.loc)+' loc'+((op.locNYC&&op.locNYC<op.loc)?(' ('+op.locNYC+' NYC)'):''),
+        stepText:'Step '+step+'/3', agoText: ago!==null?(ago+'d ago'):'', agoClr: ago===null?'#7C7163':(ago>10?'#B85C4F':(ago>5?'#E0A53C':'#3F8F5B')),
+        showOverdue:!!od, overdueText: od?(od+'d overdue'):'',
+        showDueSoon, dueSoonText: showDueSoon?(dueDays===0?'due today':('due in '+dueDays+'d')):'',
+        nextAction:op.next||'', benefitText:fmtB(op.benefit),
+        touchCount:(op.touches||[]).length,
+        isSelected:s.opSel===op.id, borderColor:s.opSel===op.id?'#3F8F5B':'#E3D9C8',
+        onClick:()=>this.openOp(op.id), detail:null,
+      };
+    };
+    const invRowVM=(inv)=>{
+      const [sbg,sfg]=statusColor(inv.status);
+      return{
+        id:inv.id, fund:inv.fund, statusLabel:inv.status, statusBg:sbg, statusFg:sfg,
+        tierLabel:'T'+inv.tier, tierClr:tierColor(inv.tier),
+        contact:inv.contact, check:inv.check, nextAction:inv.next||'',
+        touchCount:(inv.touches||[]).length,
+        isSelected:s.invSel===inv.id, borderColor:s.invSel===inv.id?'#3F8F5B':'#E3D9C8',
+        onClick:()=>this.openInv(inv.id), detail:null,
+      };
+    };
+
+    // ---- overview ----
+    const mrr = ops.filter(o=>o.status==='Signed').reduce((a,o)=>a+o.mCost,0);
+    const activePipe = ops.filter(o=>['T1 Sent','T2 Sent','T3 Sent','Replied','Meeting','In Pilot'].includes(o.status)).reduce((a,o)=>a+o.mCost,0);
+    const activeOpsCount = ops.filter(o=>!['Not Started','Scheduled','Stalled'].includes(o.status)).length;
+    const activeInvCount = invs.filter(i=>i.status!=='Not Started').length;
+    const metrics=[
+      {label:'Active operators', value:activeOpsCount, sub:'of '+ops.length+' total', color:'#211C17'},
+      {label:'Active investors', value:activeInvCount, sub:'of '+invs.length+' total', color:'#211C17'},
+      {label:'Pipeline MRR', value:fmtM(activePipe), sub:'if all convert', color:'#E0A53C'},
+      {label:'Signed MRR', value:mrr?fmtM(mrr):'$0', sub:'live revenue', color:'#E0A53C'},
+    ];
+    const opStages=[
+      {l:'Not started', n:ops.filter(o=>['Not Started','Scheduled'].includes(o.status)).length, c:'#D8D2C8'},
+      {l:'Outreach', n:ops.filter(o=>['LinkedIn Sent','T1 Sent','T2 Sent','T3 Sent'].includes(o.status)).length, c:'#3F8F5B'},
+      {l:'Engaged', n:ops.filter(o=>['Replied','Meeting'].includes(o.status)).length, c:'#2D6B44'},
+      {l:'Pilot', n:ops.filter(o=>o.status==='In Pilot').length, c:'#E0A53C'},
+      {l:'Signed', n:ops.filter(o=>o.status==='Signed').length, c:'#A0721A'},
+    ];
+    const invStages=[
+      {l:'Not started', n:invs.filter(i=>i.status==='Not Started').length, c:'#D8D2C8'},
+      {l:'In progress', n:invs.filter(i=>['Applying','Applied','Emailed'].includes(i.status)).length, c:'#3F8F5B'},
+      {l:'Engaged', n:invs.filter(i=>['Responded','In Contact','R1 Complete'].includes(i.status)).length, c:'#E0A53C'},
+      {l:'Decision', n:invs.filter(i=>['Term Sheet','Passed'].includes(i.status)).length, c:'#2D6B44'},
+    ];
+    const barsFrom=(arr)=>arr.map(x=>({label:x.l,count:x.n,height:x.n?Math.max(8,Math.min(52,x.n*11)):4,opacity:x.n?1:0.22,color:x.c}));
+
+    const daysToYC=Math.ceil((new Date('2026-07-27')-new Date())/86400000);
+    const showYC = daysToYC>0 && daysToYC<=25;
+
+    const pendingOps=ops.filter(o=>o.pending).map(o=>({id:o.id,chain:o.chain,contact:o.contact,onApprove:()=>this.approveOp(o.id),onDismiss:()=>this.dismissOp(o.id)}));
+
+    const overdueOpsRaw=ops.filter(o=>overdueDays(o.nextDue,o.status)>0).sort((a,b)=>overdueDays(b.nextDue,b.status)-overdueDays(a.nextDue,a.status));
+    const overdueList=overdueOpsRaw.map(o=>({id:o.id,chain:o.chain,contact:o.contact,badgeText:overdueDays(o.nextDue,o.status)+'d overdue',nextAction:o.next,onClick:()=>this.navTo('operators',o.id)}));
+
+    const dueSoonRaw=ops.filter(o=>{ const od=overdueDays(o.nextDue,o.status); if(od||!o.nextDue) return false; const d=Math.ceil((new Date(o.nextDue)-Date.now())/86400000); return d>=0&&d<=3; });
+    const dueSoonList=dueSoonRaw.map(o=>{ const d=Math.ceil((new Date(o.nextDue)-Date.now())/86400000); return{id:o.id,chain:o.chain,contact:o.contact,badgeText:d===0?'due today':('due in '+d+'d'),onClick:()=>this.navTo('operators',o.id)}; });
+
+    const excludeIds=new Set([...overdueOpsRaw.map(o=>o.id),...dueSoonRaw.map(o=>o.id)]);
+    const queueRaw=ops.filter(o=>!['Stalled','Signed','Not Started','Scheduled'].includes(o.status)&&!excludeIds.has(o.id)).sort((a,b)=>a.tier-b.tier).slice(0,4);
+    const queueList=queueRaw.map(o=>{ const vm=opRowVM(o); vm.onClick=()=>this.navTo('operators',o.id); return vm; });
+
+    const recentTouches=[...ops,...invs].flatMap(c=>(c.touches||[]).map(t=>({...t,chainName:c.chain||c.fund}))).sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);
+    const recentList=recentTouches.map((t,i)=>({key:t.id+'_'+i,date:t.date,type:t.type,chain:t.chainName,note:t.note}));
+
+    const ov={
+      metrics, opRib:barsFrom(opStages), invRib:barsFrom(invStages),
+      showYC, ycDays:daysToYC,
+      showPending:pendingOps.length>0, pendingCountLabel:pendingOps.length+' new '+(pendingOps.length===1?'contact':'contacts')+' from Outlook', pendingOps,
+      showOverdue:overdueList.length>0, overdueCountLabel:overdueList.length+' overdue', overdueList,
+      showDueSoon:dueSoonList.length>0, dueSoonList,
+      queueList, queueEmpty:queueList.length===0,
+      showRecent:recentList.length>0, recentList,
+    };
+
+    // ---- operators tab ----
+    const filteredOpsArr=this.filteredOps();
+    const opSegChoices=['All','Local','National'];
+    const opSegOptions=opSegChoices.map(x=>({id:x,label:x, activeBg:s.opSeg===x?'#211C17':'transparent', activeFg:s.opSeg===x?'#F3EDE2':'#7C7163', onClick:()=>this.setOpSeg(x)}));
+    const opStatusChoices=['All',...Array.from(new Set(ops.map(o=>o.status)))].slice(0,8);
+    const opStatusOptions=opStatusChoices.map(x=>{
+      const isActive=s.opFilt===x;
+      return{id:x,label:x+(x!=='All'?(' - '+ops.filter(o=>o.status===x).length):''),
+        activeBg:isActive?'#211C17':'#FBF7EF', activeFg:isActive?'#F3EDE2':'#7C7163', activeBorder:isActive?'none':'1px solid #E3D9C8',
+        onClick:()=>this.setOpFilt(x)};
+    });
+    const opRows=filteredOpsArr.map(op=>{
+      const vm=opRowVM(op);
+      if(vm.isSelected) vm.detail=this.buildOpDetailVM(op);
+      return vm;
+    });
+    const opTab={
+      query:s.opQuery, onQueryChange:(e)=>this.setOpQuery(e.target.value), onClearQuery:()=>this.setOpQuery(''), hasQuery:!!s.opQuery,
+      segOptions:opSegOptions, statusOptions:opStatusOptions,
+      onAdd:()=>this.openAdd('operator'), onExport:()=>this.exportCSV(filteredOpsArr,'tally-operators.csv'),
+      countLabel:filteredOpsArr.length+' of '+ops.length+' operators', isEmpty:opRows.length===0,
+      rows:opRows,
+    };
+
+    // ---- investors tab ----
+    const filteredInvsArr=this.filteredInvs();
+    const invTierChoices=['All','1','2','3','4','5'];
+    const invTierOptions=invTierChoices.map(t=>{
+      const isActive=s.invFilt===t;
+      const count = t==='All'?invs.length:invs.filter(i=>i.tier===Number(t)).length;
+      return{id:t,label:(t==='All'?'All tiers':'T'+t)+' - '+count,
+        activeBg:isActive?'#211C17':'#FBF7EF', activeFg:isActive?'#F3EDE2':'#7C7163', activeBorder:isActive?'none':'1px solid #E3D9C8',
+        onClick:()=>this.setInvFilt(t)};
+    });
+    const invRows=filteredInvsArr.map(inv=>{
+      const vm=invRowVM(inv);
+      if(vm.isSelected) vm.detail=this.buildInvDetailVM(inv);
+      return vm;
+    });
+    const invTab={
+      query:s.invQuery, onQueryChange:(e)=>this.setInvQuery(e.target.value), onClearQuery:()=>this.setInvQuery(''), hasQuery:!!s.invQuery,
+      tierOptions:invTierOptions,
+      onAdd:()=>this.openAdd('investor'), onExport:()=>this.exportCSV(filteredInvsArr,'tally-investors.csv'),
+      countLabel:filteredInvsArr.length+' of '+invs.length+' investors', isEmpty:invRows.length===0,
+      rows:invRows,
+    };
+
+    // ---- calendar ----
+    const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const calYr=s.calYr, calMo=s.calMo;
+    const firstDow=new Date(calYr,calMo,1).getDay();
+    const daysInMo=new Date(calYr,calMo+1,0).getDate();
+    const ds=(d)=>calYr+'-'+String(calMo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+
+    const events=[];
+    ops.forEach(c=>{
+      (c.touches||[]).forEach(t=>events.push({date:t.date,kind:'touch',chain:c.chain,contact:c.contact,note:t.note,touchType:t.type,id:c.id,tab:'operators'}));
+      if(c.nextDue&&!['Not Started','Signed','Stalled'].includes(c.status)) events.push({date:c.nextDue,kind:'due',chain:c.chain,contact:c.contact,note:c.next,id:c.id,tab:'operators'});
+    });
+    invs.forEach(c=>{ (c.touches||[]).forEach(t=>events.push({date:t.date,kind:'touch',chain:c.fund,contact:c.contact,note:t.note,touchType:t.type,id:c.id,tab:'investors'})); });
+    events.push({date:'2026-07-27',kind:'deadline',chain:'Y Combinator',contact:'YC Admissions',note:'Fall 2026 application deadline. Submit today.'});
+
+    const dotColor=(e)=> e.kind==='deadline'?'#B85C4F' : e.kind==='due'?(e.date<today?'#B85C4F':'#E0A53C') : '#3F8F5B';
+    const kindLabel=(e)=> e.kind==='deadline'?'DEADLINE' : e.kind==='due'?(e.date<today?'OVERDUE':'ACTION DUE') : (e.touchType||'TOUCH').toUpperCase();
+
+    const cellsRaw=[...Array(firstDow).fill(null),...Array.from({length:daysInMo},(_,i)=>i+1)];
+    const calCells=cellsRaw.map((d,i)=>{
+      if(!d) return {key:'e'+i,empty:true,day:null};
+      const dstr=ds(d); const evts=events.filter(e=>e.date===dstr);
+      const isTdy=dstr===today; const isSel=s.calSelDay===d;
+      const dots=evts.slice(0,3).map(e=>({color:isSel?'rgba(255,255,255,.5)':dotColor(e)}));
+      return{
+        key:'d'+d, empty:false, day:d, isTdy, isSel,
+        bg:isSel?'#211C17':isTdy?'#2D6B44':'#FBF7EF',
+        border:isSel?'#211C17':isTdy?'#2D6B44':(evts.length>0?'#3C342B':'#E3D9C8'),
+        textColor:(isSel||isTdy)?'#F3EDE2':'#211C17',
+        opacity:(dstr<today&&!evts.length)?0.5:1,
+        dots, hasMore:evts.length>3, moreCount:evts.length-3,
+        cursor:evts.length>0?'pointer':'default',
+        onClick:()=>this.selectDay(d),
+      };
+    });
+
+    let calRight;
+    if(s.calSelDay){
+      const dayE=events.filter(e=>e.date===ds(s.calSelDay));
+      calRight={ isDay:true, label:MONTHS[calMo]+' '+s.calSelDay, empty:dayE.length===0,
+        items:dayE.map((e,i)=>({key:'de'+i,chain:e.chain,sub:e.contact||'',note:e.note||'',rightLabel:kindLabel(e),rightColor:dotColor(e),onClick:e.tab?()=>this.navTo(e.tab,e.id):()=>{}})) };
+    } else {
+      const cutoff=new Date(Date.now()+30*86400000).toISOString().slice(0,10);
+      const upcoming=events.filter(e=>e.date>=today&&e.date<=cutoff&&e.kind!=='touch').sort((a,b)=>a.date.localeCompare(b.date));
+      calRight={ isDay:false, empty:upcoming.length===0,
+        items:upcoming.map((e,i)=>{ const daysAway=Math.ceil((new Date(e.date)-new Date(today))/86400000);
+          return{key:'up'+i,chain:e.chain,sub:e.date,note:e.note||'',rightLabel:daysAway===0?'today':(daysAway===1?'tomorrow':('in '+daysAway+'d')),rightColor:daysAway<=2?'#B85C4F':(daysAway<=5?'#A0721A':'#7C7163'),onClick:e.tab?()=>this.navTo(e.tab,e.id):()=>{}}; }) };
+    }
+
+    const cal={
+      monthLabel:MONTHS[calMo]+' '+calYr, onPrev:this.calPrev, onNext:this.calNext,
+      weekdays:['S','M','T','W','T','F','S'].map((d,i)=>({key:'w'+i,label:d})),
+      cells:calCells, right:calRight,
+    };
+
+    // ---- add modal ----
+    const addOpen=!!s.addType;
+    const isAddOp=s.addType==='operator';
+    let add=null;
+    if(addOpen){
+      const f=s.addForm||{};
+      add={
+        title:'Add '+(isAddOp?'operator':'investor'), submitLabel:'Add '+(isAddOp?'operator':'investor'), isAddOp,
+        onClose:this.closeAdd, onSubmit:this.submitAdd,
+        chain:f.chain, segment:f.segment, cuisine:f.cuisine, hq:f.hq, contact:f.contact, role:f.role, email:f.email,
+        loc:f.loc, locNYC:f.locNYC, status:f.status, tier:f.tier, nextDue:f.nextDue, next:f.next, notes:f.notes,
+        fund:f.fund, check:f.check,
+        onChainInput:this.setAddField('chain'), onSegmentInput:this.setAddField('segment'), onCuisineInput:this.setAddField('cuisine'),
+        onHqInput:this.setAddField('hq'), onContactInput:this.setAddField('contact'), onRoleInput:this.setAddField('role'),
+        onEmailInput:this.setAddField('email'), onLocInput:this.setAddField('loc'), onLocNYCInput:this.setAddField('locNYC'),
+        onStatusInput:this.setAddField('status'), onTierInput:this.setAddField('tier'), onNextDueInput:this.setAddField('nextDue'),
+        onNextInput:this.setAddField('next'), onNotesInput:this.setAddField('notes'),
+        onFundInput:this.setAddField('fund'), onCheckInput:this.setAddField('check'),
+        opStatusOpts:OSTS, invStatusOpts:ISTS, tierOpts:['1','2','3','4','5'],
+      };
+    }
+
+    // ---- ai modal ----
+    const aiOpen=!!(s.aiTarget||s.aiLoading);
+    let ai=null;
+    if(aiOpen){
+      const r=s.aiResult;
+      const urgColor = r ? ({High:'#B85C4F',Medium:'#E0A53C',Low:'#3F8F5B'}[r.urgency]||'#7C7163') : '#7C7163';
+      ai={
+        loading:s.aiLoading,
+        targetLabel:(s.aiTarget?(s.aiTarget.chain||s.aiTarget.fund):'')+' — '+(s.aiTarget?s.aiTarget.contact:''),
+        onClose:this.closeAI, hasResult:!!r,
+        urgency:r?r.urgency:'', urgColor,
+        nextAction:r?r.nextAction:'', reasoning:r?r.reasoning:'', hasReasoning:!!(r&&r.reasoning),
+        hasDraft:!!(r&&r.draft), draftType:r?(r.draftType||''):'', subject:r?(r.subject||''):'', hasSubject:!!(r&&r.subject), draft:r?r.draft:'',
+        copied:s.aiCopied, copyLabel:s.aiCopied?'Copied':'Copy', onCopy:this.copyDraft,
+      };
+    }
+
+    // ---- nav ----
+    const pendingCount=ops.filter(o=>o.pending).length;
+    const navTabsRaw=[
+      {id:'overview',label:'Overview'},
+      {id:'operators',label: pendingCount>0?('Operators ('+pendingCount+')'):'Operators'},
+      {id:'investors',label:'Investors'},
+      {id:'calendar',label:'Calendar'},
+    ];
+    const navTabs=navTabsRaw.map(t=>({ id:t.id, label:t.label, bg:s.tab===t.id?'#3F8F5B':'transparent', fg:s.tab===t.id?'#FBF7EF':'#B7AC9A', onClick:()=>this.setTab(t.id) }));
+
+    return{
+      authed:s.authed, pinInput:s.pinInput, pinErr:s.pinErr, pinBorderColor:s.pinErr?'#B85C4F':'#E3D9C8',
+      onPinChange:(e)=>this.setPinInput(e.target.value), onPinSubmit:this.submitPin, onPinKey:(e)=>{ if(e.key==='Enter') this.submitPin(); },
+      navTabs,
+      isOverview:s.tab==='overview', isOperators:s.tab==='operators', isInvestors:s.tab==='investors', isCalendar:s.tab==='calendar',
+      ov, opTab, invTab, cal,
+      addOpen, add,
+      aiOpen, ai,
+    };
+  }
+}
+</script>
+</body>
+</html>
